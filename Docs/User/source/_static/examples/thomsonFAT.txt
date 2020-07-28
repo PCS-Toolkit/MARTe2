@@ -1,0 +1,32 @@
+1) D-TACQ HAPI script to ARM the four boards:
+
+[dt100@spcpc373 ~]$ pwd
+/home/dt100
+[dt100@spcpc373 ~]$ llc-run-full-auto-thomson control_script
+
+2) MARTe2 SPC RT Thomson
+
+[root@spcpc373 MARTe2-examples]# pwd
+/root/MARTe2-examples
+[root@spcpc373 MARTe2-examples]# ./runmartethomson.sh 
+
+3) Run command to MARTe2
+
+[root@spcpc373 generic]# pwd
+/root/generic
+[root@spcpc373 generic]# ./sendRUN 
+
+4) Test trigger sequence start
+
+[root@spcpc373 generic]# pwd
+/root/generic
+[root@spcpc373 generic]# /home/dt100/thtrigger.py --numevents 3000
+
+5) Exit command to MARTe2
+
+[root@spcpc373 generic]# pwd
+/root/generic
+[root@spcpc373 generic]# ./sendEXIT
+
+6) jscope on spcpc171.epfl.ch (MDS+ target)
+MARTe2-RT-Thomson-debug1.jscp
