@@ -51,7 +51,7 @@ if [ -z ${MARTe2_Components_DIR+x} ]; then echo "Please set the MARTe2_Component
 
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:../../../../../Build/x86-linux/Examples/Core/
-LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/dt100/MARTe2-dev/Build/x86-linux/Examples/Core/
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/root/MARTe2-dev/Build/x86-linux/Examples/Core/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:Core/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_DIR/Build/x86-linux/Core/
 LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$MARTe2_Components_DIR/Build/x86-linux/Components/DataSources/EPICSCA/

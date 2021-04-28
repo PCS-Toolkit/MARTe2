@@ -304,7 +304,7 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
         if (ok) {
             ok = (pthread_attr_setstacksize(&stackSizeAttribute, static_cast<osulong>(stacksize)) == 0);
             if (!ok) {
-                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_attr_setstacksize(), requested stacksize was %d", stacksize);
+                REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_attr_setstacksize()");
             }
         }
 
