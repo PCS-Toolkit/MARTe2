@@ -1,0 +1,48 @@
+THIS IS THE NEW VERSION ALL FROM I9 EXCEPT:
+D-TACQ HAPI to latest version (python3)
+
+- cs-studio control, still from spcpc373
+
+1) D-TACQ HAPI script to ARM the four boards:
+
+[root@localhost dt100]# pwd
+/home/dt100
+[root@localhost dt100]# ./run-thomson
+
+2) MARTe2 SPC RT Thomson
+
+[root@localhost MARTe2-examples]# pwd
+/root/MARTe2-examples
+[root@localhost MARTe2-examples]# ./runmartethomson.sh 
+
+3) Run command to MARTe2
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendRUN 
+
+4) Test trigger sequence start
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost commands]# python3 thtriggermds.py
+
+5) Exit command to MARTe2
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendEXIT
+
+6) Manually end the acuisition on all four boards
+via cs-studio STOP button on the CAPTURE window
+
+7) jscope on spcpc171.epfl.ch (MDS+ target)
+MARTe2-RT-Thomson-debug1.jscp
+
+NOTE: Beckhoff IPC signal generator can be
+loaded with a given TCV Thomson script
+via this Python code on tcvdata:
+
+[tcv_oper@tcvdata ~]$ pwd
+/home/tcv_oper
+[tcv_oper@tcvdata ~]$ python loadthomsonrtdata.py

@@ -1,3 +1,6 @@
+THIS IS THE MIXED VERSION: DTACQ ARMED FROM SPCPC373
+WITH OLD HAPI
+
 1) D-TACQ HAPI script to ARM the four boards:
 
 [dt100@spcpc373 ~]$ pwd
@@ -6,15 +9,15 @@
 
 2) MARTe2 SPC RT Thomson
 
-[root@spcpc373 MARTe2-examples]# pwd
+[root@localhost MARTe2-examples]# pwd
 /root/MARTe2-examples
-[root@spcpc373 MARTe2-examples]# ./runmartethomson.sh 
+[root@localhost MARTe2-examples]# ./runmartethomson.sh 
 
 3) Run command to MARTe2
 
-[root@spcpc373 generic]# pwd
-/root/generic
-[root@spcpc373 generic]# ./sendRUN 
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendRUN 
 
 4) Test trigger sequence start
 
@@ -24,9 +27,9 @@
 
 5) Exit command to MARTe2
 
-[root@spcpc373 generic]# pwd
-/root/generic
-[root@spcpc373 generic]# ./sendEXIT
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendEXIT
 
 6) jscope on spcpc171.epfl.ch (MDS+ target)
 MARTe2-RT-Thomson-debug1.jscp

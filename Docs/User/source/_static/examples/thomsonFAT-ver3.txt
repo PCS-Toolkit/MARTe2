@@ -1,0 +1,45 @@
+THIS IS THE FULL MARTE2 VERSION:
+WITH D-TACQ HAPI to latest version (python3)
+
+- cs-studio control, still from spcpc373
+
+1) MARTe2 SPC RT Thomson
+
+[root@localhost MARTe2-examples]# pwd
+/root/MARTe2-examples
+[root@localhost MARTe2-examples]# ./runmartethomson.sh 
+
+2) Run command to MARTe2
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendRUN 
+
+3) Test trigger sequence start
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost commands]# ./thtriggermds.py
+
+4) Run complete command to MARTe2
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendRUNCOMPLETE
+
+5) Run complete command to MARTe2
+
+[root@localhost commands]# pwd
+/root/scd/commands
+[root@localhost generic]# ./sendEXIT
+
+6) jscope on spcpc171.epfl.ch (MDS+ target)
+MARTe2-RT-Thomson-spectro1.jscp
+
+NOTE: Beckhoff IPC signal generator can be
+loaded with a given TCV Thomson script
+via this Python code on tcvdata:
+
+[tcv_oper@tcvdata ~]$ pwd
+/home/tcv_oper
+[tcv_oper@tcvdata ~]$ python loadthomsonrtdata.py
