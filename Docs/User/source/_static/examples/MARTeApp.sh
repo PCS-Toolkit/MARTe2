@@ -94,12 +94,12 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH
 MARTeAPP=$MARTe2_DIR/Build/x86-linux/App/MARTeApp.ex
 
 #Start with cgdb or with strace
-if [ "$DEBUG" = "cgdb" ]
+if [ "$DEBUG" = "gdb" ]
 then
     if [ -z ${STATE+x} ]; then
-        cgdb --args $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
+        gdb --args $MARTeAPP -l $LOADER -f $FILE -m $MESSAGE
     else
-        cgdb --args $MARTeAPP -l $LOADER -f $FILE -s $STATE
+        gdb --args $MARTeAPP -l $LOADER -f $FILE -s $STATE
     fi
 elif [ "$DEBUG" = "strace" ]
 then
