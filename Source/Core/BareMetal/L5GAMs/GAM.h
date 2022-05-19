@@ -370,6 +370,12 @@ public:
     bool AddOutputBrokers(ReferenceContainer brokers);
 
     /**
+     * @brief Sorts internally the brokers following the signal order.
+     * @return true if success, false otherwise
+     */
+    bool SortBrokers();
+
+    /**
      * @brief Gets the list of input BrokerI components that are associated to this GAM.
      * @details These BrokerI components will be responsible from copying the data from the
      * DataSourceI memory to the GAM memory.
@@ -397,7 +403,6 @@ public:
      */
     virtual bool SetContext(ConstReference context);
 
-
     /**
      * @see ReferenceContainer::Purge()
      */
@@ -410,6 +415,14 @@ public:
      * @return true if the GAM is successfully configured.
      */
     virtual bool Setup()=0;
+
+
+    /**
+     * @see ReferenceContainer::ExportData(*)
+     * @details Also exports the current value of all the input and output signals.
+     */
+    virtual bool ExportData(StructuredDataI & data);
+
 
 protected:
 

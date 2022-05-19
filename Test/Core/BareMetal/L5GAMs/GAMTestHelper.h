@@ -206,6 +206,10 @@ GAM1    ();
 
     bool PrepareNextState(const char8 * currentStateName, const char8 * nextStateName);
 
+    uint8 *GetInputMem();
+
+    uint8 *GetOutputMem();
+
     uint32 numberOfExecutions;
     uint32 context;
 
@@ -272,6 +276,11 @@ struct TestStructG {
     TestStructF g1[2][2];
     int32 g2;
 };
+
+struct TestStructH {
+    char8 str[64];
+};
+
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////

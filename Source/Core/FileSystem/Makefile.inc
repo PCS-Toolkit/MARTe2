@@ -24,16 +24,17 @@
 #
 #############################################################
 OBJSX= 
-SPB    = L1Portability.x L3Streams.x L4LoggerService.x L6App.x
+SPB    = L1Portability.x L3Streams.x L4LoggerService.x L4HttpService.x L6App.x
 PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=../../../MakeDefaults
 
 ROOT_DIR=../../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityF$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsF$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4LoggerService/L4LoggerServiceF$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L4HttpService/L4HttpServiceF$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L6App/L6AppF$(LIBEXT)
 
 all: $(OBJS) $(SUBPROJ) \
@@ -43,5 +44,5 @@ all: $(OBJS) $(SUBPROJ) \
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

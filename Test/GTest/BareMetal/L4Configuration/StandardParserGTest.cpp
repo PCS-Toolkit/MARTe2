@@ -31,7 +31,7 @@
 
 
 #include "StandardParserTest.h"
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,6 +54,11 @@ TEST(BareMetal_L4Configuration_StandardParserGTest,TestGetGrammarInfo) {
 TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseScalar) {
     StandardParserTest parserTest;
     ASSERT_TRUE(parserTest.TestParseScalar());
+}
+
+TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseString) {
+    StandardParserTest parserTest;
+    ASSERT_TRUE(parserTest.TestParseString());
 }
 
 TEST(BareMetal_L4Configuration_StandardParserGTest,TestParseVector) {

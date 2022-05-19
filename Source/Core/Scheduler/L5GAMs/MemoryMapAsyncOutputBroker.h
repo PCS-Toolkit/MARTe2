@@ -65,6 +65,8 @@ struct MemoryMapAsyncOutputBrokerBufferEntry {
  * in the context of a different thread (SingleThreadService).
  *
  * Only one GAM is allowed to interact with this MemoryMapAsyncOutputBroker (an IOGAM can be used to collate all the signals).
+ *
+ * The DataSource shall call the UnlinkDataSource in the DataSourceI::Purge.
  */
 class MemoryMapAsyncOutputBroker: public MemoryMapBroker {
 public:
@@ -149,6 +151,16 @@ MemoryMapAsyncOutputBroker    ();
      */
     bool IsIgnoringBufferOverrun() const;
 
+    /**
+     * @brief Flush all the data left in the shared buffer between the threads.
+     * @return true if the data is properly flushed.
+     */
+    bool Flush();
+
+    /**
+     * @brief Breaks the link with the owner DataSource (set with InitWithBufferParameters)
+     */
+    void UnlinkDataSource();
 
 private:
 
@@ -229,6 +241,11 @@ private:
      * If true buffer overruns will be ignored.
      */
     bool ignoreBufferOverrun;
+
+    /**
+     * True if flushed was called.
+     */
+    bool flushed;
 };
 }
 

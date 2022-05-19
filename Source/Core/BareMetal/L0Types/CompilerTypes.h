@@ -1,6 +1,6 @@
 /**
  * @file CompilerTypes.h
- * @brief Header file for CompilerTypes
+ * @brief Header file for class CompilerTypes
  * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
@@ -38,21 +38,45 @@
 #define QUOTE_1(x) #x
 /*lint -restore */
 
+#ifndef MARTe2_PORTABLE_ENV_DIR
+#define MARTe2_PORTABLE_ENV_PARENT_DIR .
+#else
+#define MARTe2_PORTABLE_ENV_PARENT_DIR MARTe2_PORTABLE_ENV_DIR
+#endif
+
+#ifndef MARTe2_PORTABLE_ARCH_DIR
+#define MARTe2_PORTABLE_ARCH_PARENT_DIR .
+#else
+#define MARTe2_PORTABLE_ARCH_PARENT_DIR MARTe2_PORTABLE_ARCH_DIR
+#endif
+
+
 /**
  * @brief Builds an include filename based on actual architecture.
  */
+/*p=parent, a=architecture, f=file, t=tier, l=level*/
 /*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
-#define INCLUDE_FILE_ARCHITECTURE(x,y) QUOTE(Architecture/x/y)
+#ifndef MARTe2_PORTABLE_ARCH_DIR
+#define INCLUDE_FILE_ARCHITECTURE_(t,l,p,a,f) QUOTE(Architecture/a/f)
+#else
+#define INCLUDE_FILE_ARCHITECTURE_(t,l,p,a,f) QUOTE(p/t/l/Architecture/a/f)
+#endif
+#define INCLUDE_FILE_ARCHITECTURE(t,l,a,f) INCLUDE_FILE_ARCHITECTURE_(t,l,MARTe2_PORTABLE_ARCH_PARENT_DIR,a,f)
 /*lint -restore */
 
 /**
  * @brief Builds an include filename based on actual environment.
  */
+/*p=parent, e=environment, f=file, t=tier, l=level*/
 /*lint -save -e9026 -estring(1960, *16-0-6*) , function-like macro defined, unparenthesized macro parameter*/
-#define INCLUDE_FILE_ENVIRONMENT(x,y) QUOTE(Environment/x/y)
+#ifndef MARTe2_PORTABLE_ENV_DIR
+#define INCLUDE_FILE_ENVIRONMENT_(t,l,p,e,f) QUOTE(Environment/e/f)
+#else
+#define INCLUDE_FILE_ENVIRONMENT_(t,l,p,e,f) QUOTE(p/t/l/Environment/e/f)
+#endif
+#define INCLUDE_FILE_ENVIRONMENT(t,l,e,f) INCLUDE_FILE_ENVIRONMENT_(t,l,MARTe2_PORTABLE_ENV_PARENT_DIR,e,f)
 /*lint -restore */
-
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,CompilerTypes.h)
+#include INCLUDE_FILE_ARCHITECTURE(BareMetal,L0Types,ARCHITECTURE,CompilerTypes.h)
 
 /**
  * @brief Casts a 0 value to the target pointer type.
@@ -111,95 +135,6 @@ namespace MARTe {
 #define DLL_API dll_export
 #endif
 
-    /**
-     * Maximum value for integers of 64 bits
-     */
-    static const int64 MAX_INT64 = 0x7FFFFFFFFFFFFFFF;
-
-    /**
-     * Maximum value for unsigned integers of 64 bits
-     */
-    static const uint64 MAX_UINT64 = 0xFFFFFFFFFFFFFFFF;
-
-    /**
-     * Minimum value for integers of 64 bits
-     */
-    static const int64 MIN_INT64 = 0x8000000000000000;
-
-    /**
-     * Minimum value for unsigned integers of 64 bits
-     */
-    static const uint64 MIN_UINT64 = 0;
-
-    /**
-     * Maximum value for integers of 32 bits
-     */
-    static const int32 MAX_INT32 = 0x7FFFFFFF;
-
-    /**
-     * Maximum value for unsigned integers of 32 bits
-     */
-    static const uint32 MAX_UINT32 = 0xFFFFFFFF;
-
-    /**
-     * Minimum value for integers of 32 bits
-     */
-    static const int32 MIN_INT32 = 0x80000000;
-
-    /**
-     * Minimum value for unsigned integers of 32 bits
-     */
-    static const uint32 MIN_UINT32 = 0;
-
-    /**
-     * Maximum value for integers of 16 bits
-     */
-    static const int16 MAX_INT16 = 0x7FFF;
-
-    /**
-     * Maximum value for unsigned integers of 16 bits
-     */
-    static const uint16 MAX_UINT16 = 0xFFFF;
-
-    /**
-     * Minimum value for integers of 16 bits
-     */
-    static const int16 MIN_INT16 = 0x8000;
-
-    /**
-     * Minimum value for unsigned integers of 16 bits
-     */
-    static const uint16 MIN_UINT16 = 0;
-
-    /**
-     * Maximum value for integers of 8 bits
-     */
-    static const int8 MAX_INT8 = 0x7F;
-
-    /**
-     * Maximum value for unsigned integers of 8 bits
-     */
-    static const uint8 MAX_UINT8 = 0xFF;
-
-    /**
-     * Minimum value for integers of 8 bits
-     */
-    static const int8 MIN_INT8 = 0x80;
-
-    /**
-     * Minimum value for unsigned integers of 8 bits
-     */
-    static const uint8 MIN_UINT8 = 0;
-    static const uint32 MIN_FLOAT32 = 0xFF7FFFFFu;
-    static const uint32 MAX_FLOAT32 = 0x7F7FFFFFu;
-    static const uint32 EPSILON_FLOAT32 = 0x34000000u;
-    static const uint64 EPSILON_FLOAT64 = 0x3CB0000000000000ull;
-
-    /**
-     * float64 limits
-     */
-    static const float64 MAX_FLOAT64 = 0x1.FFFFFFFFFFFFFp1023;
 }
 
 #endif /* COMPILERTYPES */
-

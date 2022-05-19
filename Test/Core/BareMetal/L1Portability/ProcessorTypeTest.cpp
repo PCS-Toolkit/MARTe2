@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.cpp
  * @brief Source file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -29,10 +29,9 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ProcessorTypeTest.h"
+#include "BitSet.h"
 #include "GeneralDefinitions.h"
-#include "stdio.h"
-
+#include "ProcessorTypeTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -52,12 +51,16 @@ bool ProcessorTypeTest::TestAssignmentOperator() {
     bool result = true;
 
     ProcessorType ptTest;
-    ptTest = 0xFD;
-    result &= (ptTest.GetProcessorMask() == 0xFD);
+    ptTest = ProcessorType(0xFDu);
+    result &= (ptTest == ProcessorType(0xFDu));
 
     ptTest = ptFirst;
-    result &= (ptTest.GetProcessorMask() == ptFirst.GetProcessorMask());
+    result &= (ptTest == ptFirst);
 
+    ptTest = BitSet(0b101u);
+    result &= (ptTest.CPUEnabled(1) && !ptTest.CPUEnabled(2) && ptTest.CPUEnabled(3) && !ptTest.CPUEnabled(4));
+    result &= (ptTest == ProcessorType(0b101u));
+    result &= (ptTest.GetCPUsNumber() == 32);
     return result;
 }
 
@@ -77,9 +80,13 @@ bool ProcessorTypeTest::TestOROperator() {
     ptTest |= ptNone;
     result &= (ptTest == ptSecond);
 
-    ptTest = 0x01;
-    ptTest |= 0x02;
-    result &= (ptTest == 0x03);
+    ptTest = ProcessorType(0x01u);
+    ptTest |= 0x02u;
+    result &= (ptTest == 0x03u);
+
+    ptTest = ProcessorType(0b101u);
+    ptTest |= BitSet(0b10u);
+    result &= (ptTest == 0b111u);
 
     return result;
 
@@ -90,10 +97,13 @@ bool ProcessorTypeTest::TestEqualityOperator() {
     bool result = true;
 
     ProcessorType ptTest(ptSecond);
-    result &= (ptTest == 0xFD);
+    result &= (ptTest == 0xFDu);
 
-    ptTest = 0xFD;
+    ptTest = ProcessorType(0xFDu);
     result &= (ptTest == ptSecond);
+
+    BitSet bs(0xFDu);
+    result &= (ptTest == bs);
 
     return result;
 
@@ -103,10 +113,13 @@ bool ProcessorTypeTest::TestInequalityOperator() {
 
     bool result = true;
 
-    ProcessorType ptTest(0xFA);
-    result &= (ptTest != 0xFD);
+    ProcessorType ptTest(0xFAu);
+    result &= (ptTest != 0xFDu);
 
     result &= (ptTest != ptSecond);
+
+    BitSet bs(0xFDu);
+    result &= (ptTest != bs);
 
     return result;
 
@@ -115,10 +128,10 @@ bool ProcessorTypeTest::TestInequalityOperator() {
 bool ProcessorTypeTest::TestSetGetDefaultCPUs() {
     ProcessorType ptTest(ptSecond);
 
-    ptTest.SetDefaultCPUs(0xAA);
-    uint32 test = ptTest.GetDefaultCPUs();
+    ptTest.SetDefaultCPUs(0xAAu);
+    ProcessorType test = ptTest.GetDefaultCPUs();
 
-    if (test != 0xAA){
+    if (test != ProcessorType(0xAAu)) {
         ptTest.SetDefaultCPUs(0u);
         return false;
     }
@@ -129,64 +142,51 @@ bool ProcessorTypeTest::TestSetGetDefaultCPUs() {
 
 bool ProcessorTypeTest::TestDefaultConstructor() {
     ProcessorType ptDefault;             // Std contructor
-    return (ptDefault.GetProcessorMask() == 0xFE);
+    return (ptDefault == 0xFEu);
 }
-
 bool ProcessorTypeTest::TestConstructorFromMask() {
-    ProcessorType ptFromMask(0xFC);      // Mask constructor
+    ProcessorType ptFromMask(0xFCu);      // Mask constructor
 
-    return (ptFromMask.GetProcessorMask() == 0xFC);
+    return (ptFromMask == 0xFCu);
 
 }
 
 bool ProcessorTypeTest::TestConstructorFromProcessorType() {
-    ProcessorType toCopy(0xFC);
+    ProcessorType toCopy(0xFCu);
     ProcessorType ptFromPT(toCopy);  // Constructor from other PT
-    return (ptFromPT.GetProcessorMask() == 0xFC);
+    return (ptFromPT == 0xFCu);
 
 }
 
-bool ProcessorTypeTest::TestSetMask(uint32 mask) {
+bool ProcessorTypeTest::TestSetMask(uint64 mask) {
     ProcessorType test;
     test.SetMask(mask);
-    return ((test.GetProcessorMask() == mask));
+    return ((test == mask));
 }
 
 bool ProcessorTypeTest::TestAddCPU(uint32 cpuNumber1,
                                    uint32 cpuNumber2) {
     ProcessorType test;
-    test.SetMask(0);
+    test.SetMask(0u);
     test.AddCPU(cpuNumber1);
 
-    uint32 save = 1 << (cpuNumber1 - 1);
-    if (test.GetProcessorMask() != save) {
+    uint64 save = 1 << (cpuNumber1 - 1);
+    if (test != save) {
         return false;
     }
 
     test.AddCPU(cpuNumber2);
     save |= (1 << (cpuNumber2 - 1));
-    if (test.GetProcessorMask() != save) {
-        return false;
-    }
-
-    //the maximum supported is 32 cpu.
-    //if there is an overload it considers the rest.
-    uint32 out = 33;
-    test.AddCPU(out);
-
-    save |= 0x1;
-    if (test.GetProcessorMask() != save) {
-        return false;
-    }
-
-    //0 is the same of 32.
-    test.AddCPU(0);
-
-    save |= 0x80000000;
-
-    if (test.GetProcessorMask() != save) {
+    if (test != save) {
         return false;
     }
 
     return true;
 }
+
+bool ProcessorTypeTest::TestGetProcessorMask() {
+    ProcessorType ptTest = ProcessorType(0xFDu);
+    BitSet mask = ptTest.GetProcessorMask();
+    return (uint32)mask==0xFDu;
+}
+

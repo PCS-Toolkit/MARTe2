@@ -45,8 +45,7 @@ namespace MARTe {
 /**
  * The list of linux MARTe applications.
  */
-static const char8 * const arguments =
-        "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS]";
+static const char8 * const arguments = "Arguments are -l LOADERCLASS -f FILENAME [-p xml|json|cdb] [-s FIRST_STATE | -m MSG_DESTINATION:MSG_FUNCTION] [-c DEFAULT_CPUS] [-t BUILD_TOKENS] [-g SCHEDULER_GRANULARITY_US] [-k STOP_MSG_DESTINATION:STOP_MSG_FUNCTION]";
 
 }
 
@@ -74,6 +73,8 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         int32 i;
         for (i = 1; (i < (argc - 1)); i += 2) {
             argsConfiguration.Write(argv[i], argv[i + 1]);
+            //Also write them into the loaderParameters so that they can be use generally by any loader
+            loaderParameters.Write(argv[i], argv[i + 1]);
         }
         REPORT_ERROR_STATIC(ErrorManagement::Debug, "Arguments:\n%!", argsConfiguration);
     }
@@ -98,9 +99,34 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         }
     }
     if (ret) {
+        StreamString precompiledRealTimeFunctionsFilename;
+        if (argsConfiguration.Read("-pf", precompiledRealTimeFunctionsFilename)) {
+            ret.parametersError = !loaderParameters.Write("PrecompiledFunctions", precompiledRealTimeFunctionsFilename.Buffer());
+        }
+    }
+    if (ret) {
+        StreamString precompiledRealTimeDataFilename;
+        if (argsConfiguration.Read("-pd", precompiledRealTimeDataFilename)) {
+            ret.parametersError = !loaderParameters.Write("PrecompiledData", precompiledRealTimeDataFilename.Buffer());
+        }
+    }
+    if (ret) {
+        uint32 precompileRealTimeApp = 0;
+        if (argsConfiguration.Read("-pc", precompileRealTimeApp)) {
+            ret.parametersError = !loaderParameters.Write("PrecompileRealTimeApp", precompileRealTimeApp);
+        }
+    }
+
+    if (ret) {
         uint32 defaultCPUs = 0x1;
         (void) argsConfiguration.Read("-c", defaultCPUs);
         ret.parametersError = !loaderParameters.Write("DefaultCPUs", defaultCPUs);
+    }
+    if (ret) {
+        uint32 schedulerGranularity;
+        if(argsConfiguration.Read("-g", schedulerGranularity)) {
+            ret.parametersError = !loaderParameters.Write("SchedulerGranularity", schedulerGranularity);
+        }
     }
     if (ret) {
         StreamString parserType;
@@ -117,6 +143,20 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         }
     }
     StreamString test;
+    if (ret) {
+        StreamString buildTokens;
+        (void) argsConfiguration.Read("-t", buildTokens);
+        if (buildTokens.Size() > 0u) {
+            ret.parametersError = !loaderParameters.Write("BuildTokens", buildTokens.Buffer());
+        }
+    }
+    if (ret) {
+        StreamString domainTokens;
+        (void) argsConfiguration.Read("-d", domainTokens);
+        if (domainTokens.Size() > 0u) {
+            ret.parametersError = !loaderParameters.Write("DomainTokens", domainTokens.Buffer());
+        }
+    }
     if (ret) {
         StreamString messageArgs;
         (void) argsConfiguration.Read("-m", messageArgs);
@@ -145,6 +185,27 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
         }
     }
     if (ret) {
+        StreamString messageArgs;
+        (void) argsConfiguration.Read("-k", messageArgs);
+        if (messageArgs.Size() > 0u) {
+            char8 term;
+            messageArgs.Seek(0LLU);
+            StreamString messageDestination;
+            StreamString messageFunction;
+            ret.parametersError = !messageArgs.GetToken(messageDestination, ":", term);
+            if (ret) {
+                ret.parametersError = !messageArgs.GetToken(messageFunction, ":", term);
+            }
+            if (ret) {
+                ret.parametersError = !loaderParameters.Write("StopMessageDestination", messageDestination.Buffer());
+            }
+            if (ret) {
+                ret.parametersError = !loaderParameters.Write("StopMessageFunction", messageFunction.Buffer());
+            }
+        }
+    }
+
+    if (ret) {
         REPORT_ERROR_STATIC(ErrorManagement::Information, "Loader parameters:\n%!", loaderParameters);
         // Fix bug in REPORT_ERROR_STATIC with StructureDataI
         if(test.Size() > 0u) printf(" %s\n", test.Buffer());
@@ -154,6 +215,10 @@ ErrorManagement::ErrorType Bootstrap::ReadParameters(int32 argc, char8 **argv, S
 
 void Bootstrap::Printf(const char8 * const msg) {
     printf("%s\n", msg);
+}
+
+void Bootstrap::Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv) {
+    loader(argc, argv);
 }
 
 }

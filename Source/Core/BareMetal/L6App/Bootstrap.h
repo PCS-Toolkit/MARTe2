@@ -64,6 +64,7 @@ public:
      * - Loader: the type of loader class to be used;
      * - Filename: the name of the file to be load;
      * - DefaultCPUs: sets the threads defaults CPUs (see ProcessorType::SetDefaultCPUs);\n
+     * - SchedulerGranularity: sets the scheduler granularity in micro-seconds (i.e. any requests to sleep no more than this value, will busy sleep).
      * - Parser: the type of parser to be parse the \a configuration as one of:cdb, xml and json;\n
      * - MessageDestination (optional): the name of the Object that will receive the message upon program Start (see Loader::Initialise);\n
      * - MessageFunction (optional): the name of the Function to be called in the MessageDestination (see Loader::Initialise);\n
@@ -92,6 +93,13 @@ public:
      */
     void Printf(const char8 * const msg);
 
+    /**
+     * @brief Main function callback. It allows, for example, to spawn the Main in the context of a thread.
+     * 
+     * @param[in] argc the number of arguments provided in the main.
+     * @param[in] argv the list of arguments provided in the main.
+     */
+    void Main(int (*loader)(int32 argc, char8** argv), int32 argc, char8** argv);
 };
 
 }

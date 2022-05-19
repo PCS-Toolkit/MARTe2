@@ -32,6 +32,7 @@
 /*---------------------------------------------------------------------------*/
 
 #include "AdvancedErrorManagement.h"
+#include "BrokerI.h"
 #include "ConfigurationDatabase.h"
 #include "DataSourceI.h"
 #include "GAM.h"
@@ -57,18 +58,30 @@ GAMSchedulerI::GAMSchedulerI() :
     scheduledStates[0] = NULL_PTR(ScheduledState *);
     scheduledStates[1] = NULL_PTR(ScheduledState *);
     numberOfStates = 0u;
-
+    currentStateIdentifier = NULL_PTR(uint32 *);
+    nextStateIdentifier = 0u;
 }
 
+/*lint -e{1740} currentStateIdentifier is a pointer to a memory block allocated elsewhere*/
 GAMSchedulerI::~GAMSchedulerI() {
     if (states != NULL) {
-        if (states->threads != NULL) {
-            if (states->threads->executables != NULL) {
-                delete[] states->threads->executables;
+        if (numberOfStates > 0u) {
+            uint32 s;
+            for (s=0u; s<numberOfStates; s++) {
+                uint32 numberOfThreads = states[s].numberOfThreads;
+                if (states[s].threads != NULL_PTR(ScheduledThread *)) {
+                    uint32 t;
+                    for (t=0u; t<numberOfThreads; t++) {
+                        if (states[s].threads[t].executables != NULL_PTR(ExecutableI **)) {
+                            delete [] states[s].threads[t].executables;
+                        }
+                    }
+                    delete [] states[s].threads;
+                }
             }
-            delete[] states->threads;
         }
         delete[] states;
+        states = NULL_PTR(ScheduledState *);
     }
 }
 
@@ -107,6 +120,10 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
     if (ret) {
         numberOfStates = statesContainer->Size();
         states = new ScheduledState[numberOfStates];
+        for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
+            states[i].numberOfThreads = 0u;
+            states[i].threads = NULL_PTR(ScheduledThread *);
+        }
         for (uint32 i = 0u; (i < numberOfStates) && (ret); i++) {
             ReferenceT<RealTimeState> stateElement = statesContainer->Get(i);
             ret = stateElement.IsValid();
@@ -155,7 +172,7 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
 
                                 states[i].threads[j].numberOfExecutables = numberOfExecutables;
                                 states[i].threads[j].name = threadElement->GetName();
-                                states[i].threads[j].cpu = threadElement->GetCPU().GetProcessorMask();
+                                states[i].threads[j].cpu = threadElement->GetCPU();
                                 states[i].threads[j].stackSize = threadElement->GetStackSize();
                             }
                             uint32 c = 0u;
@@ -191,6 +208,15 @@ bool GAMSchedulerI::ConfigureScheduler(Reference realTimeAppIn) {
                                 ret = timingDataSource->GetSignalIndex(signalIdx, threadFullName.Buffer());
                                 if (ret) {
                                     ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(states[i].threads[j].cycleTime));
+                                }
+                            }
+
+                            //Get the current state identifier
+                            if(ret) {
+                                uint32 signalIdx;
+                                ret = timingDataSource->GetSignalIndex(signalIdx, "CurrentState");
+                                if (ret) {
+                                    ret = timingDataSource->GetSignalMemoryBuffer(signalIdx, 0u, reinterpret_cast<void*&>(currentStateIdentifier));
                                 }
                             }
                         }
@@ -350,13 +376,14 @@ bool GAMSchedulerI::PrepareNextState(const char8 * const currentStateName,
     }
 
     bool found = false;
-
+    nextStateIdentifier = numberOfStates;
     for (uint32 i = 0u; (i < numberOfStates) && (ret) && (!found); i++) {
         //lint -e{613} states != NULL checked before entering here.
         found = (StringHelper::Compare(nextStateName, states[i].name) == 0);
         if (found) {
             //lint -e{613} states != NULL checked before entering here.
             scheduledStates[nextBuffer] = &states[i];
+            nextStateIdentifier = i;
         }
     }
     if (ret) {
@@ -378,14 +405,35 @@ bool GAMSchedulerI::ExecuteSingleCycle(ExecutableI * const * const executables,
     uint64 absTicks = HighResolutionTimer::Counter();
     for (uint32 i = 0u; (i < numberOfExecutables) && (ret); i++) {
         // save the time before
-        // execute the gam
-        ret = executables[i]->Execute();
+        // execute the gam/broker
+        if (executables[i]->IsEnabled()) {
+            ret = executables[i]->Execute();
+        }
+
         uint64 tmp = (HighResolutionTimer::Counter() - absTicks);
         float64 ticksToTime = (static_cast<float64>(tmp) * clockPeriod) * 1e9;
         uint32 absTime = static_cast<uint32>(ticksToTime);  //ns
         if (ret) {
             uint32 sizeToCopy = static_cast<uint32>(sizeof(uint32));
             ret = MemoryOperationsHelper::Copy(executables[i]->GetTimingSignalAddress(), &absTime, sizeToCopy);
+        }
+        else {
+            BrokerI *broker = dynamic_cast<BrokerI *>(executables[i]);
+            if (broker != NULL_PTR(BrokerI *)) {
+                StreamString ownerFunctionName = broker->GetOwnerFunctionName();
+                StreamString ownerDataSourceName = broker->GetOwnerDataSourceName();
+                StreamString brokerName = "unnamed";
+                if (broker->GetName() != NULL_PTR(const char8 * const)) {
+                    brokerName = broker->GetName();
+                }
+                REPORT_ERROR (ErrorManagement::Warning, "BrokerI %s failed, owner function: %s, owner DataSource: %s", brokerName.Buffer(), ownerFunctionName.Buffer(), ownerDataSourceName.Buffer());
+            }
+            else {
+                Object *obj = dynamic_cast<Object *>(executables[i]);
+                if (obj != NULL_PTR(Object *)) {
+                    REPORT_ERROR (ErrorManagement::Warning, "ExecutableI %s failed", obj->GetName());
+                }
+            }
         }
     }
 

@@ -41,13 +41,15 @@
 /*---------------------------------------------------------------------------*/
 namespace MARTe {
 MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
-        MemoryMapBroker(), service(binder), binder(*this, &MemoryMapAsyncTriggerOutputBroker::BufferLoop) {
-    bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *);
+        MemoryMapBroker(),
+        service(binder),
+        binder(*this, &MemoryMapAsyncTriggerOutputBroker::BufferLoop) {
+    bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*);
     numberOfBuffers = 0u;
     writeIdx = 0u;
     readSynchIdx = 0u;
     preTriggerBuffers = 0u;
-    cpuMask = 0xffu;
+    cpuMask = ProcessorType(0xffu); // WARNING USING `uint32` TO INIT A `ProcessorType`
     postTriggerBuffersCounter = 0u;
     postTriggerBuffers = 0u;
     numberOfPreBuffersWritten = 0;
@@ -68,16 +70,33 @@ MemoryMapAsyncTriggerOutputBroker::MemoryMapAsyncTriggerOutputBroker() :
 
 /*lint -e{1551} the destructor must guarantee that the SingleThreadService is stopped and that buffer memory is freed.*/
 MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
+    UnlinkDataSource();
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
+        uint32 i;
+        for (i = 0u; i < numberOfBuffers; i++) {
+            uint32 c;
+            for (c = 0u; c < numberOfCopies; c++) {
+                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(bufferMemoryMap[i].mem[c]);
+            }
+            delete[] bufferMemoryMap[i].mem;
+            bufferMemoryMap[i].mem = NULL_PTR(void**);
+        }
+
+        delete[] bufferMemoryMap;
+        bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*);
+    }
+}
+
+void MemoryMapAsyncTriggerOutputBroker::UnlinkDataSource() {
     if (!sem.IsClosed()) {
         if (fastSem.FastLock() == ErrorManagement::NoError) {
             destroying = true;
+            fastSem.FastUnLock();
             if (!sem.Post()) {
                 REPORT_ERROR(ErrorManagement::FatalError, "Could not Post the EventSem.");
             }
             posted = true;
         }
-        fastSem.FastUnLock();
-
         if (!sem.Close()) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not Close the EventSem.");
         }
@@ -89,32 +108,27 @@ MemoryMapAsyncTriggerOutputBroker::~MemoryMapAsyncTriggerOutputBroker() {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not stop the EmbeddedService");
         }
     }
-    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
-        uint32 i;
-        for (i = 0u; i < numberOfBuffers; i++) {
-            uint32 c;
-            for (c = 0u; c < numberOfCopies; c++) {
-                GlobalObjectsDatabase::Instance()->GetStandardHeap()->Free(bufferMemoryMap[i].mem[c]);
-            }
-            delete[] bufferMemoryMap[i].mem;
-            bufferMemoryMap[i].mem = NULL_PTR(void **);
-        }
 
-        delete[] bufferMemoryMap;
-        bufferMemoryMap = NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *);
-    }
+    dataSourceRef = Reference();
 }
 
 /*lint -e{715} This function is implemented just to avoid using this Broker as MemoryMapBroker.*/
-bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                             void * const gamMemoryAddress) {
+bool MemoryMapAsyncTriggerOutputBroker::Init(const SignalDirection direction,
+                                             DataSourceI &dataSourceIn,
+                                             const char8 *const functionName,
+                                             void *const gamMemoryAddress) {
     return false;
 }
 
-bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction, DataSourceI &dataSourceIn, const char8 * const functionName,
-                                                                  void * const gamMemoryAddress, const uint32 numberOfBuffersIn,
-                                                                  const uint32 preTriggerBuffersIn, const uint32 postTriggerBuffersIn,
-                                                                  const ProcessorType& cpuMaskIn, const uint32 stackSizeIn) {
+bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDirection direction,
+                                                                  DataSourceI &dataSourceIn,
+                                                                  const char8 *const functionName,
+                                                                  void *const gamMemoryAddress,
+                                                                  const uint32 numberOfBuffersIn,
+                                                                  const uint32 preTriggerBuffersIn,
+                                                                  const uint32 postTriggerBuffersIn,
+                                                                  const ProcessorType &cpuMaskIn,
+                                                                  const uint32 stackSizeIn) {
     bool ok = MemoryMapBroker::Init(direction, dataSourceIn, functionName, gamMemoryAddress);
     numberOfBuffers = numberOfBuffersIn;
     preTriggerBuffers = preTriggerBuffersIn;
@@ -242,6 +256,11 @@ bool MemoryMapAsyncTriggerOutputBroker::InitWithTriggerParameters(const SignalDi
         else {
             readSynchIdx = (numberOfBuffers - preTriggerBuffers);
         }
+        StreamString serviceName;
+        if (serviceName.Printf("%s:MemoryMapAsyncOutputBroker", dataSourceIn.GetName())) {
+            service.SetName(serviceName.Buffer());
+        }
+
         ok = (service.Start() == ErrorManagement::NoError);
     }
     return ok;
@@ -270,7 +289,7 @@ uint32 MemoryMapAsyncTriggerOutputBroker::GetNumberOfBuffers() const {
 bool MemoryMapAsyncTriggerOutputBroker::Execute() {
     bool ret = true;
 
-    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
+    if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
         if (bufferMemoryMap[writeIdx].triggered) {
             //Buffer overrun...
             const uint32 idx = writeIdx;
@@ -279,7 +298,7 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
         }
         uint32 n;
         for (n = 0u; (n < numberOfCopies) && (ret); n++) {
-            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+            if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
                 //Copy into the buffered table from the GAM memory
                 ret = MemoryOperationsHelper::Copy(bufferMemoryMap[writeIdx].mem[n], copyTable[n].gamPointer, copyTable[n].copySize);
             }
@@ -328,14 +347,14 @@ bool MemoryMapAsyncTriggerOutputBroker::Execute() {
         if (ret) {
             posted = true;
             ret = sem.Post();
-            fastSem.FastUnLock();
         }
+        fastSem.FastUnLock();
     }
     return ret;
 }
 
 /*lint -e{1764} EmbeddedServiceMethodBinderI callback method pointer prototype requires a non constant ExecutionInfo*/
-ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(ExecutionInfo & info) {
+ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(ExecutionInfo &info) {
     ErrorManagement::ErrorType err;
     bool ret = true;
     if (info.GetStage() == ExecutionInfo::MainStage) {
@@ -362,12 +381,12 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(Executi
         }
         //Check all the buffers until writeIdx - preTriggerBuffers (inclusive)
         while ((readSynchIdx != static_cast<uint32>(synchStopIdx)) && (ret)) {
-            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
+            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
                 if (bufferMemoryMap[readSynchIdx].triggered) {
                     uint32 c;
                     for (c = 0u; (c < numberOfCopies) && (ret); c++) {
                         //Copy from the buffer to the DataSource memory
-                        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
+                        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
                             ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[readSynchIdx].mem[c], copyTable[c].copySize);
                         }
                     }
@@ -394,11 +413,14 @@ ErrorManagement::ErrorType MemoryMapAsyncTriggerOutputBroker::BufferLoop(Executi
         if (!destroying) {
             err = sem.Wait(TTInfiniteWait);
         }
+        else {
+            Sleep::Sec(0.1F);
+        }
         if (err.ErrorsCleared()) {
             //Only reset the semaphore if it was not posted in-between the Wait exit and now...
             if (fastSem.FastLock() == ErrorManagement::NoError) {
                 if (!posted) {
-                    err = !sem.Reset();
+                    err.fatalError = !sem.Reset();
                 }
                 if (destroying) {
                     err = ErrorManagement::Completed;
@@ -416,44 +438,46 @@ bool MemoryMapAsyncTriggerOutputBroker::FlushAllTriggers() {
     uint32 i = 0u;
     uint32 idx = writeIdx;
     bool ret = true;
-    bool waitForBufferLoop = bufferLoopExecuting;
-    //Wait for the BufferLoop to end.
-    while ((waitForBufferLoop) && (ret)) {
-        ret = (fastSem.FastLock() == ErrorManagement::NoError);
-        waitForBufferLoop = bufferLoopExecuting;
-        fastSem.FastUnLock();
-        Sleep::Sec(1e-3F);
-    }
-    if (ret) {
-        ret = (fastSem.FastLock() == ErrorManagement::NoError);
-    }
+    if (service.GetStatus() != EmbeddedThreadI::OffState) {
+        bool waitForBufferLoop = bufferLoopExecuting;
+        //Wait for the BufferLoop to end.
+        while ((waitForBufferLoop) && (ret)) {
+            ret = (fastSem.FastLock() == ErrorManagement::NoError);
+            waitForBufferLoop = bufferLoopExecuting;
+            fastSem.FastUnLock();
+            Sleep::Sec(1e-3F);
+        }
+        if (ret) {
+            ret = (fastSem.FastLock() == ErrorManagement::NoError);
+        }
 
-    while ((i < numberOfBuffers) && (ret)) {
-        if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry *)) {
-            if (bufferMemoryMap[idx].triggered) {
-                uint32 c;
-                for (c = 0u; (c < numberOfCopies) && (ret); c++) {
-                    //Copy from the buffer to the DataSource memory
-                    if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry *)) {
-                        ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[idx].mem[c], copyTable[c].copySize);
+        while ((i < numberOfBuffers) && (ret)) {
+            if (bufferMemoryMap != NULL_PTR(MemoryMapAsyncTriggerOutputBrokerBufferEntry*)) {
+                if (bufferMemoryMap[idx].triggered) {
+                    uint32 c;
+                    for (c = 0u; (c < numberOfCopies) && (ret); c++) {
+                        //Copy from the buffer to the DataSource memory
+                        if (copyTable != NULL_PTR(MemoryMapBrokerCopyTableEntry*)) {
+                            ret = MemoryOperationsHelper::Copy(copyTable[c].dataSourcePointer, bufferMemoryMap[idx].mem[c], copyTable[c].copySize);
+                        }
                     }
-                }
-                if (ret) {
-                    if (dataSourceRef.IsValid()) {
-                        //Make sure that the dataSourceRef consumes this data.
-                        ret = dataSourceRef->Synchronise();
+                    if (ret) {
+                        if (dataSourceRef.IsValid()) {
+                            //Make sure that the dataSourceRef consumes this data.
+                            ret = dataSourceRef->Synchronise();
+                        }
                     }
+                    bufferMemoryMap[idx].triggered = false;
                 }
-                bufferMemoryMap[idx].triggered = false;
             }
+            idx++;
+            if (idx == numberOfBuffers) {
+                idx = 0u;
+            }
+            i++;
         }
-        idx++;
-        if (idx == numberOfBuffers) {
-            idx = 0u;
-        }
-        i++;
+        fastSem.FastUnLock();
     }
-    fastSem.FastUnLock();
     return ret;
 }
 

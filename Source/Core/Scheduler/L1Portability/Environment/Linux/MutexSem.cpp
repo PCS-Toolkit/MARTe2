@@ -27,7 +27,7 @@
 
 #include <pthread.h>
 #include <math.h>
-#include <sys/timeb.h>
+#include <sys/time.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -179,9 +179,6 @@ bool MutexSem::Close() {
     bool ok = true;
     if (!handle->closed) {
         handle->closed = true;
-        /*lint -e{534} the UnLock is allowed to fail (and it will if the semaphore was never used).
-         *The semaphore has to be closed whatever the result.*/
-        UnLock();
         ok = (pthread_mutexattr_destroy(&handle->mutexAttributes) == 0);
         if (ok) {
             ok = (pthread_mutex_destroy(&handle->mutexHandle) == 0);
@@ -233,14 +230,15 @@ ErrorManagement::ErrorType MutexSem::Lock(const TimeoutType &timeout) {
     else {
         if (ok) {
             struct timespec timesValues;
-            timeb tb;
-            ok = (ftime(&tb) == 0);
+            struct timeval tv;
+	    struct timezone tz;
+            ok = (gettimeofday(&tv, &tz) == 0);
 
             if (ok) {
-                float64 sec = static_cast<float64>(timeout.GetTimeoutMSec());
-                sec += static_cast<float64>(tb.millitm);
-                sec *= 1e-3;
-                sec += static_cast<float64>(tb.time);
+                float64 sec = static_cast<float64>(timeout.GetTimeoutUSec());
+                sec += static_cast<float64>(tv.tv_usec);
+                sec *= 1e-6;
+                sec += static_cast<float64>(tv.tv_sec);
 
                 float64 roundValue = floor(sec);
                 timesValues.tv_sec = static_cast<int32>(roundValue);

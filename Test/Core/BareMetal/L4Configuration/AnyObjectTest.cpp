@@ -123,7 +123,7 @@ bool AnyObjectTest::TestSerialise_StaticMeshChar() {
     AnyObject anyObj;
     bool ok = anyObj.Serialise(strArrWrite);
 
-    /*char8 *readStr = static_cast<char8 *>(anyObj.GetType().GetDataPointer());
+    char8 *readStr = static_cast<char8 *>(anyObj.GetType().GetDataPointer());
 
     ok &= (StringHelper::Compare(&(readStr[0]), &(strArrWrite[0][0][0])) == 0);
     ok &= (StringHelper::Compare(&(readStr[4]), &(strArrWrite[0][1][0])) == 0);
@@ -132,8 +132,7 @@ bool AnyObjectTest::TestSerialise_StaticMeshChar() {
     ok &= (StringHelper::Compare(&(readStr[16]), &(strArrWrite[1][1][0])) == 0);
     ok &= (StringHelper::Compare(&(readStr[20]), &(strArrWrite[1][2][0])) == 0);
 
-    return ok;*/
-    return !ok;
+    return ok;
 }
 
 bool AnyObjectTest::TestSerialise_ScalarString() {
@@ -258,6 +257,34 @@ bool AnyObjectTest::TestSerialise_MatrixString() {
     for (i = 0; ok && (i < nOfRows); i++) {
         for (j = 0; ok && (j < nOfColumns); j++) {
             ok = (StringHelper::Compare(mat[i][j].Buffer(), testMat[i][j]) == 0);
+        }
+    }
+
+    return ok;
+}
+
+bool AnyObjectTest::TestSerialise_StaticTensor() {
+    uint32 nOfRows = 2;
+    uint32 nOfColumns = 3;
+    uint32 nOfPages = 3;
+    const uint32 intArrWrite[3][2][3] = { { {1 , 2 , 3 }, {4 , 5 , 6 } },
+                                          { {7 , 8 , 9 }, {10, 11, 12} },
+                                          { {13, 14, 15}, {16, 17, 18} }
+                                        };
+    AnyType at(UnsignedInteger32Bit, 0u, intArrWrite);
+    at.SetNumberOfDimensions(3u);
+    at.SetNumberOfElements(0u, nOfRows);
+    at.SetNumberOfElements(1u, nOfColumns);
+    at.SetNumberOfElements(2u, nOfPages);
+    
+    AnyObject anyObj;
+    bool ok = anyObj.Serialise(at);
+    uint32* testTensor = reinterpret_cast<uint32*>(anyObj.GetType().GetDataPointer());
+    for (uint32 k = 0; ok && (k < nOfPages); k++) {
+        for (uint32 i = 0; ok && (i < nOfRows); i++) {
+            for (uint32 j = 0; ok && (j < nOfColumns); j++) {
+                ok = (MemoryOperationsHelper::Compare( testTensor + (j + nOfColumns*(i + nOfRows*k)) , (void*) &intArrWrite[k][i][j], 4u) == 0u);
+            }
         }
     }
 

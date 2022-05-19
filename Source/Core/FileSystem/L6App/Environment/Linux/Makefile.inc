@@ -26,15 +26,16 @@
 
 PACKAGE=Core/FileSystem/L6App
 ROOT_DIR=../../../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  Bootstrap.x
 		
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 
 INCLUDES+=-I../../../L1Portability
+INCLUDES+=-I../../../L3Streams
 INCLUDES+=-I../../../../BareMetal/L0Types
 INCLUDES+=-I../../../../BareMetal/L1Portability
 INCLUDES+=-I../../../../BareMetal/L2Objects
@@ -51,5 +52,5 @@ all: $(OBJS) $(CPPS) \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

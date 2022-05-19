@@ -29,13 +29,12 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "TypeConversionTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -4890,11 +4889,19 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestStructuredDataToObject_No
 
     ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject_NoCompatibility());
 }
+
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestObjectToStructuredData) {
     TypeConversionTest myTypeConversionTest;
 
     ASSERT_TRUE(myTypeConversionTest.TestObjectToStructuredData());
 }
+
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestObjectArrayToStructuredData) {
+    TypeConversionTest myTypeConversionTest;
+
+    ASSERT_TRUE(myTypeConversionTest.TestObjectArrayToStructuredData());
+}
+
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestStructuredDataToStructuredData) {
     TypeConversionTest myTypeConversionTest;
@@ -4902,8 +4909,11 @@ TEST(BareMetal_L4Configuration_TypeConversionGTest,TestStructuredDataToStructure
     ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToStructuredData());
 }
 
+TEST(BareMetal_L4Configuration_TypeConversionGTest,TestStructuredDataToObject_SourceIntrospectionArray) {
+    TypeConversionTest myTypeConversionTest;
 
-
+    ASSERT_TRUE(myTypeConversionTest.TestStructuredDataToObject_SourceIntrospectionArray());
+}
 
 TEST(BareMetal_L4Configuration_TypeConversionGTest,TestTypeConvertPointer_CString) {
     TypeConversionTest myTypeConversionTest;

@@ -1,8 +1,8 @@
 /**
  * @file ProcessorTypeGTest.cpp
  * @brief Source file for class ProcessorTypeGTest
- * @date 25/giu/2015
- * @author Giuseppe Ferr�
+ * @date 25/06/2015
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -24,13 +24,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "ProcessorTypeTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -91,4 +90,9 @@ TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestSetMask) {
 TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestAddCPU) {
     ProcessorTypeTest processorTypeTest;
     ASSERT_TRUE(processorTypeTest.TestAddCPU(3,9));
+}
+
+TEST(BareMetal_L1Portability_ProcessorTypeGTest,TestGetProcessorMask) {
+    ProcessorTypeTest processorTypeTest;
+    ASSERT_TRUE(processorTypeTest.TestGetProcessorMask());
 }

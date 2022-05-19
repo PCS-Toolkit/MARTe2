@@ -111,6 +111,7 @@ bool LoggerService::Initialise(StructuredDataI &data) {
         logger = Logger::Instance(numberOfLogPages);
         logThreadService.SetStackSize(stackSize);
         logThreadService.SetCPUMask(cpuMask);
+        logThreadService.SetName(GetName());
         ok = logThreadService.Start();
         if (!ok) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not start the embedded thread.");
@@ -122,6 +123,15 @@ bool LoggerService::Initialise(StructuredDataI &data) {
 /*lint -e{715} the consuming algorithm is independent of the thread state*/
 ErrorManagement::ErrorType LoggerService::Execute(ExecutionInfo & info) {
     if (logger != NULL_PTR(Logger *)) {
+        bool terminate = (info.GetStage() == ExecutionInfo::TerminationStage);
+        if (!terminate) {
+            terminate = (info.GetStage() == ExecutionInfo::BadTerminationStage);
+        }
+
+        if (terminate){
+            //If terminating wait a couple of seconds for the log to flush before...
+            Sleep::Sec(1.0F);
+        }
         uint32 i;
         if (consumers != NULL_PTR(LoggerConsumerI **)) {
             LoggerPage *page = logger->GetLogEntry();
@@ -132,6 +142,10 @@ ErrorManagement::ErrorType LoggerService::Execute(ExecutionInfo & info) {
                 logger->ReturnPage(page);
                 page = logger->GetLogEntry();
             }
+        }
+        if (terminate) {
+            //.. and after
+            Sleep::Sec(1.0F);
         }
     }
     Sleep::Sec(1e-3F);

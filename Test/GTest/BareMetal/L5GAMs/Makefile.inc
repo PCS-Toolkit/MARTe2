@@ -25,6 +25,8 @@
 
 OBJSX=  BrokerIGTest.x\
         DataSourceIGTest.x\
+        ExecutableIGTest.x\
+        GAMBareSchedulerGTest.x\
         GAMDataSourceGTest.x\
         GAMGroupGTest.x\
         GAMGTest.x\
@@ -49,11 +51,12 @@ OBJSX=  BrokerIGTest.x\
 
 PACKAGE=GTest/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
+include $(ROOT_DIR)/Test/$(MARTe2_TEST_ENVIRONMENT)/Makefile.utest
 
-INCLUDES += -I../../../
+INCLUDES += -I../../..
 INCLUDES += -I../../../Core/BareMetal/L0Types
 INCLUDES += -I../../../Core/BareMetal/L1Portability
 INCLUDES += -I../../../Core/BareMetal/L2Objects
@@ -81,5 +84,5 @@ all: $(OBJS)    \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

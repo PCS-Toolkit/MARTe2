@@ -24,15 +24,16 @@
 
 PACKAGE=Core/Scheduler
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 
 OBJSX = CircularBufferThreadInputDataSource.x \
-	GAMScheduler.x \
+        FastScheduler.x \
+        GAMScheduler.x \
 	MemoryMapAsyncOutputBroker.x \
 	MemoryMapAsyncTriggerOutputBroker.x 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../BareMetal/L0Types
 INCLUDES+=-I../../BareMetal/L1Portability 
@@ -52,4 +53,4 @@ all: $(OBJS) $(SUBPROJ)   \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

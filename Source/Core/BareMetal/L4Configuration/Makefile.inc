@@ -27,11 +27,16 @@
 OBJSX=	AnyObject.x \
 		AnyTypeCreator.x \
 		ConfigurationDatabase.x\
+		ConfigurationDatabaseNode.x\
+		ConfigurationParserI.x \
 		FloatToInteger.x \
 		IntegerToFloat.x \
 		IntrospectionStructure.x \
 		JsonParser.x \
 		LexicalAnalyzer.x \
+		MathExpressionParser.x \
+		RuntimeEvaluator.x \
+		RuntimeEvaluatorFunction.x \
 		StringToFloat.x \
 		StringToInteger.x \
 		TypeConversion.x \
@@ -40,18 +45,20 @@ OBJSX=	AnyObject.x \
 		ParserI.x \
 		StandardParser.x \
 		ValidateBasicType.x \
-		XMLParser.x 
+		XMLParser.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
 INCLUDES += -I../L0Types
 INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
 INCLUDES += -I../L3Streams
+
+OPTIM = -O2
 
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L4ConfigurationB$(LIBEXT) \
@@ -60,5 +67,5 @@ all: $(OBJS)    \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

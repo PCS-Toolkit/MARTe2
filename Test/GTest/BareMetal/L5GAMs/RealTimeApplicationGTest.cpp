@@ -25,8 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -164,3 +163,14 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestStopCurrentStateExecution_Mes
     RealTimeApplicationTest test;
     ASSERT_TRUE(test.TestStopCurrentStateExecution_Message());
 }
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestCheckSameGamInMoreThreads) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestCheckSameGamInMoreThreads());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationGTest,TestCheckMultipleProducersWrites) {
+    RealTimeApplicationTest test;
+    ASSERT_TRUE(test.TestCheckMultipleProducersWrites());
+}
+

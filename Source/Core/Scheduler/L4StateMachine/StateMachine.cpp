@@ -63,9 +63,9 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
             REPORT_ERROR(ErrorManagement::FatalError, "Could not Stop the StateMachine.");
         }
     }
+    bool ok = true;
     if (currentState.IsValid()) {
         uint32 j;
-        bool ok = true;
         for (j = 0u; (j < currentState->Size()) && (ok); j++) {
             ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
             if (currentStateEventJ.IsValid()) {
@@ -73,8 +73,35 @@ void StateMachine::Purge(ReferenceContainer &purgeList) {
             }
         }
     }
+    uint32 i;
+    for (i = 0u; (i < Size()) && (ok); i++) {
+        ReferenceT<ReferenceContainer> state = Get(i);
+        if (state.IsValid()) {
+            uint32 j;
+            for (j = 0u; (j < state->Size()) && (ok); j++) {
+                ReferenceT<StateMachineEvent> event = state->Get(j);
+                if (event.IsValid()) {
+                    event->SetStateMachine(Reference());
+                }
+            }
+        }
+    }
+    PurgeFilters();
     ReferenceContainer::Purge(purgeList);
 }
+
+bool StateMachine::ExportData(StructuredDataI & data) {
+    bool ok = ReferenceContainer::ExportData(data);
+    if (ok) {
+        StreamString currentStateName = "";
+        if (currentState.IsValid()) {
+            currentStateName = currentState->GetName();
+        }
+        ok = data.Write("CurrentState", currentStateName.Buffer());
+    }
+    return ok;
+}
+
 
 bool StateMachine::Initialise(StructuredDataI &data) {
     ErrorManagement::ErrorType err;
@@ -144,6 +171,7 @@ bool StateMachine::Initialise(StructuredDataI &data) {
         }
     }
     if (err.ErrorsCleared()) {
+        QueuedMessageI::SetQueueName(GetName());
         err = Start();
     }
     if (err.ErrorsCleared()) {
@@ -168,15 +196,25 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
     }
 
     if (err.ErrorsCleared()) {
-        //Remove all the filters related to the previous event (except this one which will be removed by the MessageFilter).
-        uint32 j;
-        bool ok = true;
-        for (j = 0u; (j < currentState->Size()) && (ok); j++) {
-            ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
-            if (currentStateEventJ != event) {
+        nextStateError = event->GetNextStateError();
+        nextState = event->GetNextState();
+        REPORT_ERROR(ErrorManagement::Information, "Changing from state (%s) to state (%s)", currentState->GetName(), nextState.Buffer());
+        errSend = SendMultipleMessagesAndWaitReply(*(event.operator ->()), event->GetTransitionTimeout());
+    }
+
+    StreamString currentStateName=currentState->GetName();
+    if (err.ErrorsCleared()) {
+        if (nextState != currentStateName) {
+            //Remove all the filters related to the previous event (except this one which will be removed by the MessageFilter).
+            uint32 j;
+            bool ok = true;
+            for (j = 0u; (j < currentState->Size()) && (ok); j++) {
+                ReferenceT<StateMachineEvent> currentStateEventJ = currentState->Get(j);
                 if (currentStateEventJ.IsValid()) {
-                    err = RemoveMessageFilter(currentStateEventJ);
-                    ok = err.ErrorsCleared();
+                    if (currentStateEventJ != event) {
+                        err = RemoveMessageFilter(currentStateEventJ);
+                        ok = err.ErrorsCleared();
+                    }
                 }
             }
         }
@@ -185,12 +223,6 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         REPORT_ERROR(ErrorManagement::FatalError, "Error removing StateMachineEvent filters");
     }
 
-    if (err.ErrorsCleared()) {
-        nextStateError = event->GetNextStateError();
-        nextState = event->GetNextState();
-        REPORT_ERROR(ErrorManagement::Information, "Changing from state (%s) to state (%s)", currentState->GetName(), nextState.Buffer());
-        errSend = SendMultipleMessagesAndWaitReply(*(event.operator ->()), event->GetTransitionTimeout());
-    }
     //Install the next state event filters...
     if (errSend.ErrorsCleared()) {
         if (nextState.Size() > 0u) {
@@ -219,8 +251,11 @@ ErrorManagement::ErrorType StateMachine::EventTriggered(ReferenceT<StateMachineE
         for (j = 0u; (j < currentState->Size()) && (ok); j++) {
             ReferenceT<StateMachineEvent> nextStateEventJ = currentState->Get(j);
             if (nextStateEventJ.IsValid()) {
-                err = InstallMessageFilter(nextStateEventJ);
-                ok = err.ErrorsCleared();
+                nextStateEventJ->Reset();
+                if (nextState != currentStateName) {
+                    err = InstallMessageFilter(nextStateEventJ);
+                    ok = err.ErrorsCleared();
+                }
             }
         }
     }

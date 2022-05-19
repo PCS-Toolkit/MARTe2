@@ -24,13 +24,12 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "SleepTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -73,5 +72,15 @@ TEST(BareMetal_L1Portability_SleepGTest,TestSleepSemiBusy) {
 TEST(BareMetal_L1Portability_SleepGTest,TestGetDateSeconds) {
     SleepTest sleepTest;
     ASSERT_TRUE(sleepTest.TestGetDateSeconds());
+}
+
+TEST(BareMetal_L1Portability_SleepGTest,TestGetSchedulerGranularity) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestGetSchedulerGranularity());
+}
+
+TEST(BareMetal_L1Portability_SleepGTest,TestSetSchedulerGranularity) {
+    SleepTest sleepTest;
+    ASSERT_TRUE(sleepTest.TestSetSchedulerGranularity());
 }
 

@@ -41,24 +41,28 @@
 using namespace MARTe;
 
 static const char8 * const BASE_PATH = "GTestDirectoryTest";
+static const uint32 DIRECTORY_PATH_LEN = 128u;
 
 DirectoryTest::DirectoryTest() {
-
+    Delete_Directory();
+    Create_Directory();
 }
 
 DirectoryTest::~DirectoryTest() {
-
+    Delete_Directory();
 }
 
 bool DirectoryTest::TestDirectoryTest(const char8 * pathin) {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, pathin);
     Directory dir(path);
     return (StringHelper::Compare(dir.GetName(), path) == 0);
 }
 
 bool DirectoryTest::TestSetByName_Valid() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestSetByName_Valid");
     Directory dir(path);
     dir.Create(false);
@@ -70,7 +74,8 @@ bool DirectoryTest::TestSetByName_Valid() {
 }
 
 bool DirectoryTest::TestSetByName_NULL() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, NULL);
     Directory dir(path);
     bool ok = dir.SetByName(path);
@@ -81,7 +86,8 @@ bool DirectoryTest::TestSetByName_NULL() {
 }
 
 bool DirectoryTest::TestSetByName_Invalid() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "abc");
     Directory dir(path);
     bool ok = !dir.SetByName(path);
@@ -89,7 +95,8 @@ bool DirectoryTest::TestSetByName_Invalid() {
 }
 
 bool DirectoryTest::TestGetName_Valid() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestNameValid");
     Directory dir(path);
     dir.Create(false);
@@ -103,7 +110,8 @@ bool DirectoryTest::TestGetName_Invalid() {
 }
 
 bool DirectoryTest::TestIsDirectory_Invalid() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestIsDirectoryInvalid.txt");
     Directory dir(path);
     dir.Create(true);
@@ -111,7 +119,8 @@ bool DirectoryTest::TestIsDirectory_Invalid() {
 }
 
 bool DirectoryTest::TestIsDirectory_Valid() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestIsDirectoryValid");
     Directory dir(path);
     dir.Create(false);
@@ -119,7 +128,8 @@ bool DirectoryTest::TestIsDirectory_Valid() {
 }
 
 bool DirectoryTest::TestIsFile_No() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestIsNoFile");
     Directory dir(path);
     dir.Create(false);
@@ -127,7 +137,8 @@ bool DirectoryTest::TestIsFile_No() {
 }
 
 bool DirectoryTest::TestIsFile_Yes() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestIsFile.txt");
     Directory dir(path);
     dir.Create(true);
@@ -135,8 +146,10 @@ bool DirectoryTest::TestIsFile_Yes() {
 }
 
 bool DirectoryTest::TestGetSize_Dir() {
-    char8 path[128];
-    char8 path2[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
+    char8 path2[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path2[0], '\0', DIRECTORY_PATH_LEN);
 
     DirectoryCreateN(path, "TestGetSize_Dir1");
     Directory dir(path);
@@ -150,8 +163,10 @@ bool DirectoryTest::TestGetSize_Dir() {
 }
 
 bool DirectoryTest::TestGetSize_FileCorrect() {
-    char8 path[128];
-    char8 path2[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
+    char8 path2[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path2[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestGetSize_File_C.txt");
     DirectoryCreateN(path2, "TestGetSize_File1_C.txt");
     Directory dir(path);
@@ -175,8 +190,10 @@ bool DirectoryTest::TestGetSize_FileCorrect() {
 }
 
 bool DirectoryTest::TestGetSize_FileIncorrect() {
-    char8 path[128];
-    char8 path2[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
+    char8 path2[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path2[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestGetSize_File_I.txt");
     DirectoryCreateN(path2, "TestGetSize_File1_I.txt");
     Directory dir(path);
@@ -199,7 +216,8 @@ bool DirectoryTest::TestGetSize_FileIncorrect() {
 }
 
 bool DirectoryTest::TestGetLastAccessTime() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestGetLastAccessTime.txt");
     Directory dir(path);
     dir.Create(true);
@@ -217,8 +235,10 @@ bool DirectoryTest::TestGetLastAccessTime() {
 }
 
 bool DirectoryTest::TestGetLastAccessTime_ReRead() {
-    char8 path[128];
-    char8 pathR[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
+    char8 pathR[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&pathR[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestGetLastAccessTime_ReRead.txt");
     Directory dir(path);
     dir.Create(true);
@@ -242,7 +262,8 @@ bool DirectoryTest::TestGetLastAccessTime_ReRead() {
 }
 
 bool DirectoryTest::TestGetLastWriteTime() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, "TestGetLastWriteTime.txt");
     Directory dir(path);
     dir.Create(true);
@@ -258,7 +279,8 @@ bool DirectoryTest::TestGetLastWriteTime() {
 }
 
 bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
 
     DirectoryCreateN(path, "TestGetLastWriteTime_ReWrite.txt");
     Directory dir(path);
@@ -282,7 +304,8 @@ bool DirectoryTest::TestGetLastWriteTime_ReWrite() {
 
 bool DirectoryTest::TestCreate(const char8 *pathin,
                                const bool isFile) {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, pathin);
     Directory dir(path);
 #if ENVIRONMENT == Windows
@@ -299,21 +322,24 @@ bool DirectoryTest::TestCreate(const char8 *pathin,
 
 bool DirectoryTest::TestDelete(const char8 * pathin,
                                bool isFile) {
-    char8 path[128];
-    DirectoryCreateN(path, pathin);
-    Directory dir(path);
-    dir.Create(isFile);
     if ((pathin != NULL) && (StringHelper::Compare(pathin, "") != 0)) {
+        char8 path[DIRECTORY_PATH_LEN];
+        MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
+        DirectoryCreateN(path, pathin);
+        Directory dir(path);
+        dir.Create(isFile);
         return dir.Delete();
     }
     else {
+        Directory dir;
         return !dir.Delete();
     }
 }
 
 bool DirectoryTest::TestExists(const char8 * pathin,
                                bool isFile) {
-    char8 path[128];
+    char8 path[DIRECTORY_PATH_LEN];
+    MemoryOperationsHelper::Set(&path[0], '\0', DIRECTORY_PATH_LEN);
     DirectoryCreateN(path, pathin);
     Directory dir(path);
     dir.Create(isFile);
@@ -327,10 +353,12 @@ bool DirectoryTest::TestExists(const char8 * pathin,
 
 void DirectoryTest::DirectoryCreateN(char8 *destination,
                                      const char8 *path) {
-    destination[0] = '\0';
     StringHelper::Concatenate(destination, BASE_PATH);
-    StringHelper::Concatenate(destination, &DIRECTORY_SEPARATOR);
-    StringHelper::Concatenate(destination, path);
+    destination[StringHelper::Length(BASE_PATH)] = DIRECTORY_SEPARATOR;
+    destination[StringHelper::Length(BASE_PATH) + 1u] = '\0';
+    if (path != NULL) {
+        StringHelper::Concatenate(destination, path);
+    }
 }
 
 bool DirectoryTest::Create_Directory() {

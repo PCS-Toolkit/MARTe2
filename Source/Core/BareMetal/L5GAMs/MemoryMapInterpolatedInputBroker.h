@@ -50,12 +50,11 @@ namespace MARTe {
  * loaded into its memory (i.e. all the pointers returned by DataSourceI::GetSignalMemoryBuffer shall have valid values).
  */
 class DLL_API MemoryMapInterpolatedInputBroker: public MemoryMapBroker {
-public:
-    CLASS_REGISTER_DECLARATION()
+public:CLASS_REGISTER_DECLARATION()
     /**
      * @brief Default constructor. NOOP.
      */
-MemoryMapInterpolatedInputBroker    ();
+    MemoryMapInterpolatedInputBroker();
 
     /**
      * @brief Destructor. NOOP.
@@ -83,15 +82,16 @@ MemoryMapInterpolatedInputBroker    ();
      * @param[in] dataSourceXAxisIn the independent variable to compute the interpolation segments. It shall be updated by the DataSourceI every time the DataSourceI::Execute method is called.
      * @param[in] interpolationPeriodIn the interpolation period (how much the interpolatedXAxis is incremented every time a new interpolated sample is generated).
      */
-    void SetIndependentVariable(const uint64 * const dataSourceXAxisIn, const uint64 interpolationPeriodIn);
+    void SetIndependentVariable(const uint64 *const dataSourceXAxisIn,
+                                const uint64 interpolationPeriodIn);
 
     /**
      * @brief See MemoryMapBroker::Init
      */
     virtual bool Init(const SignalDirection direction,
-            DataSourceI &dataSourceIn,
-            const char8 * const functionName,
-            void * const gamMemoryAddress);
+                      DataSourceI &dataSourceIn,
+                      const char8 *const functionName,
+                      void *const gamMemoryAddress);
 
     /**
      * @brief Resets the interpolation vector to start counting from the first time value.
@@ -112,7 +112,8 @@ private:
      * @param[in] dx the interpolation segment length.
      */
     template<typename valueType>
-    void ChangeInterpolationSegment(uint32 copyIdx, uint64 dx);
+    void ChangeInterpolationSegment(uint32 copyIdx,
+                                    uint64 dx);
 
     /**
      * @brief Calls ChangeInterpolationSegment for all the broker signals.
@@ -179,35 +180,56 @@ namespace MARTe {
 
 template<typename valueType>
 void MemoryMapInterpolatedInputBroker::Interpolate(uint32 copyIdx) {
-uint32 i;
-for (i = 0u; i < numberOfElements[copyIdx]; i++) {
+    uint32 i;
+    for (i = 0u; i < numberOfElements[copyIdx]; i++) {
+        valueType *y0p = (valueType*) (y0[copyIdx]);
+/**
+ * Do not assume memory alignment... (see below)
+        float64 y = static_cast<float64>(y0p[i]);
+ */
+        valueType ytemp;
+        (void) MemoryOperationsHelper::Copy(&ytemp, &y0p[i], sizeof(valueType));
+        float64 y = static_cast<float64>(ytemp);
 
-    valueType *y0p = (valueType *) (y0[copyIdx]);
-    float64 y = static_cast<float64>(y0p[i]);
-    //How long as elapsed in this interpolation segment
-    float64 cttns = static_cast<float64>(interpolatedXAxis - x0);
-    //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
-    float64 newy = m[copyIdx] * cttns;
-    y += newy;
-    valueType *dest = static_cast<valueType *>(copyTable[copyIdx].gamPointer);
-    dest[i] = static_cast<valueType>(y);
-}
+        //How long as elapsed in this interpolation segment
+        float64 cttns = static_cast<float64>(interpolatedXAxis - x0);
+        //y = y0p + m * (t - x0), where y0p and t0p are the initial values for the interpolation period
+        float64 newy = m[copyIdx] * cttns;
+        y += newy;
+        valueType *dest = static_cast<valueType*>(copyTable[copyIdx].gamPointer);
+        //dest[i] = static_cast<valueType>(y);
+        ytemp = static_cast<valueType>(y);
+        (void) MemoryOperationsHelper::Copy(&dest[i], &ytemp, sizeof(valueType));
+    }
 }
 
 template<typename valueType>
-void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx, uint64 dx) {
-uint32 i;
-for (i = 0u; i < numberOfElements[copyIdx]; i++) {
-    valueType *y0p = (valueType *) (y0[copyIdx]);
-    valueType *y1p = (valueType *) (y1[copyIdx]);
-    valueType *y1pds = (valueType *) (copyTable[copyIdx].dataSourcePointer);
+void MemoryMapInterpolatedInputBroker::ChangeInterpolationSegment(uint32 copyIdx,
+                                                                  uint64 dx) {
+    uint32 i;
+    for (i = 0u; i < numberOfElements[copyIdx]; i++) {
+        valueType *y0p = (valueType*) (y0[copyIdx]);
+        valueType *y1p = (valueType*) (y1[copyIdx]);
+        valueType *y1pds = (valueType*) (copyTable[copyIdx].dataSourcePointer);
 
-    y0p[i] = y1p[i];
-    y1p[i] = y1pds[i];
-    //Compute the derivative m = (y1-y0)/(x1-x0)
-    m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
-    m[copyIdx] /= dx;
-}
+        /**
+         * Do not assume memory alignment... (see e.g. https://stackoverflow.com/questions/13804215/arm-memcpy-and-alignment)
+         * This code was giving bus errors in arm targets when the memory was not aligned to four bytes (which may the case when
+         * the GAM/DataSource signals interleave with different byte sizes).
+         *      y0p[i] = y1p[i];
+         *      y1p[i] = y1pds[i];
+         */
+        (void) MemoryOperationsHelper::Copy(&y0p[i], &y1p[i], sizeof(valueType));
+        (void) MemoryOperationsHelper::Copy(&y1p[i], &y1pds[i], sizeof(valueType));
+        valueType y0v;
+        valueType y1v;
+        (void) MemoryOperationsHelper::Copy(&y0v, &y0p[i], sizeof(valueType));
+        (void) MemoryOperationsHelper::Copy(&y1v, &y1p[i], sizeof(valueType));
+        //Compute the derivative m = (y1-y0)/(x1-x0)
+        //m[copyIdx] = static_cast<float64>(y1p[i] - y0p[i]);
+        m[copyIdx] = static_cast<float64>(y1v - y0v);
+        m[copyIdx] /= dx;
+    }
 }
 
 }

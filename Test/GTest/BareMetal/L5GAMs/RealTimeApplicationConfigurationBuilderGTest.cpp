@@ -1,7 +1,7 @@
-/**
+ /**
  * @file RealTimeApplicationConfigurationBuilderGTest.cpp
  * @brief Source file for class RealTimeApplicationConfigurationBuilderGTest
- * @date 13/07/2016
+ * @date 22/08/2019
  * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
@@ -25,14 +25,14 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 #include "RealTimeApplicationConfigurationBuilderTest.h"
 
+using namespace MARTe;
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -217,6 +217,107 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestFlattenSi
     ASSERT_TRUE(test.TestFlattenSignalsDatabases_UnregisteredType());
 }
 
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates2(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates2_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates2(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_FunctionGroups) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_FunctionGroups(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_FunctionGroups_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_FunctionGroups(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_MoreThreads) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_MoreThreads(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_MoreThreads_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_MoreThreads(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMInMoreThreads) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMInMoreThreads(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMInMoreThreads_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMInMoreThreads(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_SameGAMInMoreThreads_Config) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_SameGAMInMoreThreads_Config(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_SameGAMInMoreThreads_Config_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStates_SameGAMInMoreThreads_Config(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs1) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs1(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs1_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs1(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs2(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs2_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs2(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs3(false));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs3_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs3(true));
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_InvalidApplication) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveStatesFalse_InvalidApplication());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveStates_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveStates_False());
+}
+
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources1) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSources1());
@@ -231,6 +332,38 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDa
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSources3());
 }
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMap());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap2) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMap2());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap3) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMap3());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMapNamespaces) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructMapNamespaces());
+}
+
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructNamespaceMap) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMap());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructNamespaceMapInDs) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMapInDs());
+}
+
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSource_False) {
     RealTimeApplicationConfigurationBuilderTest test;
@@ -297,37 +430,6 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDa
     ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_PartialDataSourceWithType());
 }
 
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources_StructMap());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap2) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources_StructMap2());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMap3) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources_StructMap3());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructMapNamespaces) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources_StructMapNamespaces());
-}
-
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructNamespaceMap) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMap());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSources_StructNamespaceMapInDs) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveDataSources_StructNamespaceMapInDs());
-}
-
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveDataSourcesSignalsFalse_LeafMappedOnNode) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestResolveDataSourcesSignalsFalse_LeafMappedOnNode());
@@ -392,184 +494,10 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyDat
     ASSERT_TRUE(test.TestVerifyDataSourcesSignalsFalse_IncompatibleDefaultsMultiVarAsArray());
 }
 
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals1) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignals1());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals2) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignals2());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignals3) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignals3());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignals) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyFunctionSignals());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignalsFalse_FalseNoType) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyFunctionSignalsFalse_FalseNoType());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignalsFalse_FalseNoNumberOfElements) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyFunctionSignalsFalse_FalseNoNumberOfElements());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignalsFalse_FalseNoNumberOfDimensions) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyFunctionSignalsFalse_FalseNoNumberOfDimensions());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyFunctionSignalsFalse_FalseNoQualifiedName) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyFunctionSignalsFalse_FalseNoQualifiedName());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates2) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates2(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates2_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates2(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_FunctionGroups) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates_FunctionGroups(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_FunctionGroups_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates_FunctionGroups(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_MoreThreads) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates_MoreThreads(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStates_MoreThreads_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStates_MoreThreads(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMInMoreThreads) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMInMoreThreads(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_SameGAMInMoreThreads_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_SameGAMInMoreThreads(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs1) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs1(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs1_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs1(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs2) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs2(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs2_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs2(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs3) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs3(false));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_MoreSyncs3_FromConfig) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_MoreSyncs3(true));
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveStatesFalse_InvalidApplication) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveStatesFalse_InvalidApplication());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveStates_False) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveStates_False());
-}
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_VerifyConsumersProducers_False) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation_VerifyConsumersProducers_False());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveFunctionSignalsMemorySize_False) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveFunctionSignalsMemorySize_False());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveFunctionsMemory_False) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveFunctionsMemory_False());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyStates) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyStates());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyStatesFalse_GAMNeverCalled) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyStatesFalse_GAMNeverCalled());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveConsumersAndProducers());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers_MoreSignalsSameGAM) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveConsumersAndProducers_MoreSignalsSameGAM());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers_MoreThreads) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveConsumersAndProducers_MoreThreads());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers_MoreStates) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveConsumersAndProducers_MoreStates());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveConsumersAndProducers_MoreProducers) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveConsumersAndProducers_MoreProducers());
 }
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers) {
@@ -580,16 +508,6 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyCon
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_Ranges) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyConsumersAndProducers_Ranges());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_Ranges2) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_Ranges2());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_Ranges3) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_Ranges3());
 }
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_TimingSignals) {
@@ -617,99 +535,20 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyCon
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_RangeOverlap2());
 }
 
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_RangeOverlap_Config) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_RangeOverlap_Config());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestVerifyConsumersAndProducers_RangeOverlap_Config_FromConfig());
+}
+
+
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestVerifyConsumersAndProducersFalse_ProducerInTimeSignals());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_Ranges) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_Ranges());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_FalseInvalidRanges) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_FalseInvalidRanges());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_FalseInvalidRanges2());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionSignalsMemorySize_FalseInvalidRanges3());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemory) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionsMemory());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemory_Samples) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionsMemory_Samples());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemory_InterleavedDs) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionsMemory_InterleavedDs());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemory_SamplesAndBlocks) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionsMemory_SamplesAndBlocks());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestResolveFunctionsMemoryFalse_InvalidSamples) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestResolveFunctionsMemoryFalse_InvalidSamples());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDataSource) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDataSource_GamIO) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource_GamIO());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignFunctionsMemoryToDataSource_AlignedStruct) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignFunctionsMemoryToDataSource_AlignedStruct());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctions) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignBrokersToFunctions());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFalse_UnregisteredDataSource) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_UnregisteredDataSource());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFalse_UnsupportedBroker) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_UnsupportedBroker());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFalse_UnsupportedBroker_Output) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_UnsupportedBroker_Output());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestAssignBrokersToFunctionsFalse_InvalidApplication) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestAssignBrokersToFunctionsFalse_InvalidApplication());
 }
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestCopy) {
@@ -747,6 +586,31 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigure
     ASSERT_TRUE(test.TestConfigureAfterInitialisation());
 }
 
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureAfterInitialisation_ResolveStates_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureAfterInitialisation_ResolveStates_False());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureAfterInitialisation_VerifyDataSourcesSignals_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureAfterInitialisation_VerifyDataSourcesSignals_False());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureAfterInitialisation_VerifyConsumersProducers_False) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureAfterInitialisation_VerifyConsumersProducers_False());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureAfterInitialisation_False_NoFunctions) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureAfterInitialisation_False_NoFunctions());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureAfterInitialisation_False_NoData) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestConfigureAfterInitialisation_False_NoData());
+}
+
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation());
@@ -755,16 +619,6 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigure
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestConfigureBeforeInitialisation_VerifyDataSourcesSignals_False());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_ResolveFunctionSignals_False) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_ResolveFunctionSignals_False());
-}
-
-TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureBeforeInitialisation_VerifyFunctionSignals_False) {
-    RealTimeApplicationConfigurationBuilderTest test;
-    ASSERT_TRUE(test.TestConfigureBeforeInitialisation_VerifyFunctionSignals_False());
 }
 
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestConfigureThreads) {
@@ -790,4 +644,14 @@ TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestArraysOfS
 TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestArraysOfStructures2) {
     RealTimeApplicationConfigurationBuilderTest test;
     ASSERT_TRUE(test.TestArraysOfStructures2());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestStructureDefaultArrayMember) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestStructureDefaultArrayMember());
+}
+
+TEST(BareMetal_L5GAMs_RealTimeApplicationConfigurationBuilderGTest,TestStructureDefaultArrayMemberString) {
+    RealTimeApplicationConfigurationBuilderTest test;
+    ASSERT_TRUE(test.TestStructureDefaultArrayMemberString());
 }

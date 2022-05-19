@@ -24,12 +24,12 @@
 #
 #############################################################
 OBJSX= 
-SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Logger.x L4Messages.x L5GAMs.x L6App.x
+SPB    = L0Types.x L1Portability.x L2Objects.x L3Streams.x L4Configuration.x L4Logger.x L4Messages.x L4HttpService.x L5GAMs.x L6App.x
 PACKAGE=Core
-MAKEDEFAULTDIR=../../../MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=../../../MakeDefaults
 
 ROOT_DIR=../../..
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 LIBRARIES_STATIC=$(BUILD_DIR)/L0Types/L0TypesB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L1Portability/L1PortabilityB$(LIBEXT)
@@ -38,6 +38,7 @@ LIBRARIES_STATIC+=$(BUILD_DIR)/L3Streams/L3StreamsB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4Configuration/L4ConfigurationB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4Logger/L4LoggerB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L4Messages/L4MessagesB$(LIBEXT)
+LIBRARIES_STATIC+=$(BUILD_DIR)/L4HttpService/L4HttpServiceB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L5GAMs/L5GAMsB$(LIBEXT)
 LIBRARIES_STATIC+=$(BUILD_DIR)/L6App/L6AppB$(LIBEXT)
 
@@ -48,5 +49,5 @@ all: $(OBJS) $(SUBPROJ) \
 
 
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

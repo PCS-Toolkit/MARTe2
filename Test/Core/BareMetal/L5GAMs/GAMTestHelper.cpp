@@ -29,15 +29,14 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
+#include "ConfigurationDatabase.h"
+#include "GAMSchedulerI.h"
 #include "GAMTestHelper.h"
 #include "Introspection.h"
 #include "IntrospectionT.h"
-#include "ConfigurationDatabase.h"
 #include "MemoryMapInputBroker.h"
 #include "MemoryMapOutputBroker.h"
-#include "GAMSchedulerI.h"
 #include "Sleep.h"
-#include "stdio.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
 /*---------------------------------------------------------------------------*/
@@ -123,6 +122,13 @@ static const IntrospectionEntry* TestStructGEntries[] = { &TestStructG_g1_intros
 
 DECLARE_STRUCT_INTROSPECTION(TestStructG, TestStructGEntries);
 
+DECLARE_CLASS_MEMBER(TestStructH, str, char8, "[64]", "");
+
+static const IntrospectionEntry* TestStructHEntries[] = { &TestStructH_str_introspectionEntry, 0 };
+
+DECLARE_STRUCT_INTROSPECTION(TestStructH, TestStructHEntries);
+
+
 ///////////////////////////////////////////
 ///////////////////////////////////////////
 ///////////////////////////////////////////
@@ -170,6 +176,15 @@ bool GAM1::Execute() {
 
 bool GAM1::Setup() {
     return true;
+}
+
+
+uint8 *GAM1::GetInputMem() {
+    return (uint8*)GetInputSignalsMemory();
+}
+
+uint8 *GAM1::GetOutputMem() {
+    return (uint8*)GetOutputSignalsMemory();
 }
 
 CLASS_REGISTER(GAM1, "1.0");

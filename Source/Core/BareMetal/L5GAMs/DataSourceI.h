@@ -60,6 +60,7 @@ enum SignalDirection {
  * <pre>
  * +ThisDataSourceIObjectName = {
  *    Class = ClassThatImplementsDataSourceI
+ *    DefaultBrokerOptim = true //Optional. Can be true or false, default = false. If true, the Init of the BrokerI is called with optim = true.
  *    Signals = {
  *        +*NAME = {
  *            +Type = BasicType|StructuredType
@@ -534,6 +535,12 @@ public:
     virtual const char8 *GetBrokerName(StructuredDataI &data, const SignalDirection direction)=0;
 
     /**
+     * @brief Allows a Broker to inform a DataSource that all data has been coppied from its memory.
+     * @return true as it is not implemented in default implementation.
+     */
+    virtual bool BrokerCopyTerminated();
+
+    /**
      * @brief Adds to the \a inputBrokers all the BrokerI instances that will interact with the GAM with name \a functionName.
      * @details The default implementation will add the brokers returned by GetBrokerName. The synchronous broker (if any) will be forced to be executed before all the other brokers.
      * A synchronous broker is one where the GetFunctionSignalReadFrequency or the GetFunctionSignalTrigger for any of the signal required by the GAM return a value > 0.
@@ -685,6 +692,16 @@ private:
      * Accelerator reference for the functionsDatabaseNode.
      */
     ConfigurationDatabase functionsDatabaseNode;
+
+    /**
+     * Accelerator for the signal names.
+     */
+    ConfigurationDatabase signalNameCache;
+
+    /**
+     * Default broker optimisation
+     */
+    bool defaultBrokerOptim;
 };
 
 }

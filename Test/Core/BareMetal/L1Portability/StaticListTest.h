@@ -183,9 +183,22 @@ public:
      */
     bool TestSquareOperatorInvalidPosition();
 
-
+    /**
+     * @brief Tests the Set function
+     */
     template<elementType value>
     bool TestSet(uint32 positionToSet);
+
+    /**
+     * @brief Tests if size goes down to 0 and capacity maintained after calling Clean function
+     */
+    bool TestClean();
+
+    /**
+     * @brief Tests that pointer to memory const is retrieved correctly
+     */
+    bool TestGetAllocatedMemoryConst();
+
 };
 
 }
@@ -207,7 +220,7 @@ StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestDefaultConstructor(void) {
-    const uint32 MAXINDEX = TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXINDEX = MAX_UINT32;
     const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType))) * (listAllocationGranularity * sizeof(elementType)))
             / sizeof(elementType));
 
@@ -223,7 +236,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
 
 template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
 bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestConstantness(void) {
-    const uint32 MAXINDEX = TypeCharacteristics::MaxValue<uint32>();
+    const uint32 MAXINDEX = MAX_UINT32;
     const uint32 MAXCAPACITY = (((MAXINDEX / (listAllocationGranularity * sizeof(elementType))) * (listAllocationGranularity * sizeof(elementType)))
             / sizeof(elementType));
 
@@ -753,7 +766,7 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
         targetList.Add(demoValues[i]);
     }
 
-    elementType toSet=value;
+    elementType toSet = value;
     targetList.Set(positionToSet, toSet);
 
     elementType test;
@@ -761,6 +774,50 @@ bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoV
     return value == test;
 }
 
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestClean() {
+    bool ok = true;
+    uint32 initialCapacity;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    initialCapacity = targetList.GetCapacity();
+
+    targetList.Clean();
+
+    ok &= (targetList.GetSize() == 0);
+    ok &= (targetList.GetCapacity() == initialCapacity);
+
+    return ok;
+}
+
+template<typename elementType, uint32 listAllocationGranularity, elementType demoValues[], uint32 maxDemoValues>
+bool StaticListTest<elementType, listAllocationGranularity, demoValues, maxDemoValues>::TestGetAllocatedMemoryConst() {
+    bool ok = true;
+    StaticList<elementType, listAllocationGranularity> targetList;
+
+    //Initializes the target list with the demo values:
+    for (uint32 i = 0; i < maxDemoValues; i++) {
+        targetList.Add(demoValues[i]);
+    }
+
+    const elementType* allocatedMem = targetList.GetAllocatedMemoryConst();
+
+    if (maxDemoValues == 0) {
+        ok &= (allocatedMem == NULL_PTR(elementType));
+    }
+    else {
+        for (uint32 i = 0; (ok) && (i < maxDemoValues); i++) {
+            ok &= (allocatedMem[i] == demoValues[i]);
+        }
+    }
+
+    return ok;
+}
 
 }
 

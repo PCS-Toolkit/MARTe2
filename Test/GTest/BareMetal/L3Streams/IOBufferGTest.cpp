@@ -25,13 +25,12 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "IOBufferTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -656,4 +655,28 @@ TEST(BareMetal_L3Streams_IOBufferGTest, TestPrintPointerMatrix) {
     ASSERT_TRUE(myIOBufferTest.TestPrintPointerMatrix());
 }
 
+TEST(BareMetal_L3Streams_IOBufferGTest, TestRefill) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestRefill());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestFlush) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestFlush());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreSpaceToWriteArg) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWriteArg());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreSpaceToWrite) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreSpaceToWrite());
+}
+
+TEST(BareMetal_L3Streams_IOBufferGTest, TestNoMoreDataToRead) {
+    IOBufferTest myIOBufferTest;
+    ASSERT_TRUE(myIOBufferTest.TestNoMoreDataToRead());
+}
 

@@ -34,6 +34,7 @@
 
 #include "ExecutableI.h"
 #include "GAM.h"
+#include "ProcessorType.h"
 #include "ReferenceContainer.h"
 #include "ReferenceT.h"
 #include "StatefulI.h"
@@ -67,7 +68,7 @@ struct ScheduledThread {
     /**
      * The cpus where is possible to run the thread
      */
-    uint32 cpu;
+    ProcessorType cpu;
 
     /**
      * The thread stack size
@@ -155,6 +156,8 @@ public:
 
     /**
      * @brief Executes a list of ExecutableIs storing their execution times with respect the start time instant.
+     * @details Note that if one of the executables returns ErrorManagement::Completed, the current cycle will be 
+     * deemed to be completed and thus no other executables will run.
      * @param[in] executables the list of ExecutablesIs to be executed
      * @param[in] numberOfExecutables how many ExecutableIs have to be executed.
      */
@@ -208,7 +211,17 @@ protected:
      * The real-time application linked to this scheduler
      */
     Reference realTimeApp;
-private:
+
+    /**
+    * @brief Pointer to the memory area where a numeric identifier for the current state is stored 
+    */
+    uint32 *currentStateIdentifier;
+
+    /**
+    * @brief Numeric identifier for the next state
+    */
+    uint32 nextStateIdentifier;
+
 
     /**
      * Double buffer accelerator to the threads to be executed for the current

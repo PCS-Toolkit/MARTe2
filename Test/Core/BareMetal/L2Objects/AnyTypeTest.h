@@ -256,6 +256,11 @@ public:
     bool TestGetTypeDescriptor();
 
     /**
+     * @brief Tests if the function sets the type descriptor.
+     */
+    bool TestSetTypeDescriptor();
+
+    /**
      * @brief Tests if the function returns the bit address.
      */
     bool TestGetBitAddress();
@@ -299,6 +304,11 @@ public:
      * @brief Tests if the function returns correctly the byte size.
      */
     bool TestGetByteSize();
+    
+    /**
+     * @brief Tests if the function returns correctly the total size of the data.
+     */
+    bool TestGetDataSize();
 
     /**
      * @brief Tests if the operator works for matrix of structures static declared
@@ -403,7 +413,7 @@ bool AnyTypeTest::TestAnyType_BitRange() {
     BitRange<baseType, sizeof(baseType), 2> bitRange;
     AnyType anytype(bitRange);
 
-    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
@@ -420,7 +430,7 @@ bool AnyTypeTest::TestAnyType_FractionalInteger() {
     FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
     AnyType anytype(fractionalInteger);
 
-    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
     retVal &= (td.isConstant == false);
@@ -437,7 +447,7 @@ bool AnyTypeTest::TestAnyType_ConstFractionalInteger() {
     const FractionalInteger<baseType, sizeof(baseType)> fractionalInteger;
     AnyType anytype(fractionalInteger);
 
-    BasicType type = (TypeCharacteristics::IsSigned<baseType>()) ? SignedInteger : UnsignedInteger;
+    BasicType type = (TypeCharacteristics<baseType>::IsSigned()) ? SignedInteger : UnsignedInteger;
     TypeDescriptor td = anytype.GetTypeDescriptor();
     retVal = (td.isStructuredData == false);
     retVal &= (td.isConstant == true);

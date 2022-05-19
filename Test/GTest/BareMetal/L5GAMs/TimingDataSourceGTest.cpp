@@ -24,8 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -53,4 +52,9 @@ TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestSetConfiguredDatabase) {
 TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestSetConfiguredDatabase_False_Producers) {
     TimingDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_False_Producers());
+}
+
+TEST(BareMetal_L5GAMs_TimingDataSourceGTest,TestCurrentStateValue) {
+    TimingDataSourceTest test;
+    ASSERT_TRUE(test.TestCurrentStateValue());
 }

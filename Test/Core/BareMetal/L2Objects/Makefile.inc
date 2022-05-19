@@ -41,6 +41,7 @@ OBJSX=  AnyTypeTest.x\
 		ObjectTest.x \
 		ObjectRegistryDatabaseTest.x \
 		ObjectTestHelper.x \
+		ReferenceContainerFilterNameAndTypeTest.x\
 		ReferenceContainerFilterObjectNameTest.x \
 		ReferenceContainerFilterReferencesTest.x \
 		ReferenceContainerNodeTest.x \
@@ -54,9 +55,9 @@ OBJSX=  AnyTypeTest.x\
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
@@ -71,5 +72,5 @@ all: $(OBJS) \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

@@ -28,23 +28,25 @@ OBJSX=ErrorLoggerExample.x \
 
 PACKAGE=Examples
 ROOT_DIR=../../../../../..
-MAKEDEFAULTDIR=$(MARTe2_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 INCLUDES += -I.
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L0Types
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L1Portability
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L2Objects
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L3Streams
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Configuration
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L4Messages
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/BareMetal/L5GAMs
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L1Portability
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/FileSystem/L3Streams
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L1Portability
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L3Services
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4Messages
-INCLUDES += -I$(MARTe2_DIR)/Source/Core/Scheduler/L4StateMachine
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L0Types
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L2Objects
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L3Streams
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4Configuration
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4HttpService
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L4Messages
+INCLUDES += -I$(ROOT_DIR)/Source/Core/BareMetal/L5GAMs
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L3Streams
+INCLUDES += -I$(ROOT_DIR)/Source/Core/FileSystem/L4HttpService
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L1Portability
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L3Services
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L4Messages
+INCLUDES += -I$(ROOT_DIR)/Source/Core/Scheduler/L4StateMachine
 
 all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/AtomicExample1$(EXEEXT) \
@@ -59,8 +61,10 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ConfigurationExample5$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample6$(EXEEXT) \
         $(BUILD_DIR)/ConfigurationExample7$(EXEEXT) \
+        $(BUILD_DIR)/ConfigurationExample8$(EXEEXT) \
         $(BUILD_DIR)/FixedGAMExample1$(GAMEXT) \
         $(BUILD_DIR)/HighResolutionTimerExample1$(EXEEXT) \
+        $(BUILD_DIR)/HttpExample1$(EXEEXT) \
         $(BUILD_DIR)/LoggerServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample1$(EXEEXT) \
         $(BUILD_DIR)/MessageExample2$(EXEEXT) \
@@ -81,6 +85,8 @@ all: $(OBJS) $(SUBPROJ) \
         $(BUILD_DIR)/ReferencesExample4$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample5$(EXEEXT) \
         $(BUILD_DIR)/ReferencesExample6$(EXEEXT) \
+        $(BUILD_DIR)/ReferencesExample7$(EXEEXT) \
+        $(BUILD_DIR)/RuntimeEvaluatorExample1$(EXEEXT) \
         $(BUILD_DIR)/SingleThreadServiceExample1$(EXEEXT) \
         $(BUILD_DIR)/StateMachineExample1$(EXEEXT) \
         $(BUILD_DIR)/StreamStringExample1$(EXEEXT) \
@@ -95,4 +101,4 @@ all: $(OBJS) $(SUBPROJ) \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)

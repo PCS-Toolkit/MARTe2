@@ -23,29 +23,39 @@
 # $Id: Makefile.inc 3 2012-01-15 16:26:07Z aneto $
 #
 #############################################################
-OBJSX=
-SPB=
-SPBC=Source/Core.x Source/App.x
-SPBT=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test/GTest.x
-SUBPROJCORE = $(SPBC:%.x=%.spb)
-SUBPROJTEST = $(SPBT:%.x=%.spb)
-SUBPROJCOREC = $(SPBC:%.x=%.spc)
-SUBPROJTESTC = $(SPBT:%.x=%.spc)
+#Subprojects w.r.t. the main directory only (important to allow setting SPBM as an export variable - inside this Makefile, i.e. it cannot be in MakeDefaults).
+#If SPB is directly exported as an environment variable it will also be evaluated as part of the subprojects SPB, thus potentially overriding its value.
+#Main target and test subprojects.
+SPBM?=Source/Core.x Source/App.x
+SPBMT?=Test/Core/BareMetal.x Test/Core/Scheduler.x Test/Core/FileSystem.x Test.x Docs/User/source/_static/examples/Core.x
+#This really has to be defined locally.
+SUBPROJMAIN=$(SPBM:%.x=%.spb)
+SUBPROJMAINTEST=$(SPBMT:%.x=%.spb)
+SUBPROJMAINCLEAN=$(SPBM:%.x=%.spc)
+SUBPROJMAINTESTCLEAN=$(SPBMT:%.x=%.spc)
 
-MAKEDEFAULTDIR=MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=MakeDefaults
 
 ROOT_DIR=.
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
-all: $(OBJS) core test
+all: $(OBJS) gtest core test
 	echo  $(OBJS)
 
-core: $(SUBPROJCORE)
-	echo  $(SUBPROJCORE)
+core: $(SUBPROJMAIN)
+	echo  $(SUBPROJMAIN)
 
-test: $(SUBPROJTEST)
-	echo  $(SUBPROJTEST)
+gtest:
+ifeq ($(TARGET), x86-linux)
+	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+else ifeq ($(TARGET), cov)
+	make -C Lib/gtest-1.7.0 -f Makefile.$(TARGET)
+endif
 
-clean: $(SUBPROJCOREC) $(SUBPROJTESTC)
+test: $(SUBPROJMAINTEST)
+	echo  $(SUBPROJMAINTEST)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+clean:: $(SUBPROJMAINCLEAN) $(SUBPROJMAINTESTCLEAN) clean_wipe_old
+
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
+

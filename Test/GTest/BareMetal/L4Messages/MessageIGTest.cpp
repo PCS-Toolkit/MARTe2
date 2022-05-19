@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "MessageITest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -78,6 +78,11 @@ TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_NoDestinationForEx
 TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidDestination) {
     MessageITest target;
     ASSERT_TRUE(target.TestSendMessage_False_InvalidDestination());
+}
+
+TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidDestination_Not_Exist) {
+    MessageITest target;
+    ASSERT_TRUE(target.TestSendMessage_False_InvalidDestination_Not_Exist());
 }
 
 TEST(BareMetal_L4Messages_MessageIGTest,TestSendMessage_False_InvalidFunction) {

@@ -87,6 +87,18 @@ public:
     static inline void SemiBusy(const float32 totalSleepSec,
             const float32 nonBusySleepSec);
 
+    /**
+     * @brief Gets the scheduler granularity (i.e. any requests to sleep no more than this value, will busy sleep).
+     * @return the scheduler granularity in micro-seconds.
+     */
+    static uint32 GetSchedulerGranularity();
+
+    /**
+     * @brief Sets the scheduler granularity (i.e. any requests to sleep no more than this value, will busy sleep).
+     * @param[in] granularity the scheduler granularity in micro-seconds.
+     */
+    static void SetSchedulerGranularity(const uint32 &granularity);
+
 private:
 
     /**
@@ -101,6 +113,11 @@ private:
      * @param[in] usecTime is the time to sleep in micro-seconds
      */
     static void OsUsleep(uint32 usecTime);
+
+    /**
+     * The scheduler granularity (i.e. any requests to sleep no more than this value, will busy sleep).
+     */
+    static uint32 schedulerGranularity;
 };
 
 /*---------------------------------------------------------------------------*/
@@ -111,11 +128,11 @@ void Sleep::NoMore(const float32 sec) {
 
     uint32 uSec = static_cast<uint32>((sec * 1e6) + 0.5);
 
-    uint32 toGrow = SCHED_GRANULARITY_US;
+    uint32 toGrow = schedulerGranularity;
     while (toGrow < uSec) {
-        toGrow += SCHED_GRANULARITY_US;
+        toGrow += schedulerGranularity;
     }
-    toGrow -= SCHED_GRANULARITY_US;
+    toGrow -= schedulerGranularity;
 
     MicroSeconds(uSec, toGrow);
 
@@ -145,12 +162,15 @@ void Sleep::SemiBusy(const float32 totalSleepSec,
 
 void Sleep::MicroSeconds(uint32 totalUsecTime,
                          uint32 nonBusyUsecTime) {
+    
     uint64 startCounter = HighResolutionTimer::Counter();
-    uint64 deltaTicks = totalUsecTime * static_cast<uint64>(static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
+    uint64 deltaTicks = static_cast<uint64>(totalUsecTime * static_cast<float64>(HighResolutionTimer::Frequency()) / 1e6);
 
     OsUsleep(nonBusyUsecTime);
-
-    while ((HighResolutionTimer::Counter() - startCounter) < deltaTicks) {
+    //Never try to busy sleep if not requested by the caller. This is to avoid issues with times that might be on the past
+    if (totalUsecTime != nonBusyUsecTime) {
+        while ((HighResolutionTimer::Counter() - startCounter) < deltaTicks) {
+        }
     }
 }
 

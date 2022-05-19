@@ -26,11 +26,12 @@
 
 PACKAGE=Core/FileSystem/L1Portability
 ROOT_DIR=../../../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
 OBJSX=  BasicFile.x \
 		BasicSocket.x \
 		BasicTCPSocket.x \
+		BasicUART.x \
 		BasicUDPSocket.x \
 		Directory.x \
 		DirectoryScanner.x \
@@ -38,7 +39,7 @@ OBJSX=  BasicFile.x \
 		InternetService.x \
 		Select.x 
 		
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES+=-I../../
 
@@ -54,5 +55,5 @@ all: $(OBJS) $(CPPS) \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

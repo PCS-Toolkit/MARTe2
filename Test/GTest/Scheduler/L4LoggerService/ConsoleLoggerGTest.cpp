@@ -29,7 +29,7 @@
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "ConsoleLoggerTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -39,17 +39,17 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
-TEST(Scheduler_L3Services_ConsoleLoggerGTest,TestConstructor) {
+TEST(Scheduler_L4LoggerService_ConsoleLoggerGTest,TestConstructor) {
     ConsoleLoggerTest target;
     ASSERT_TRUE(target.TestConstructor());
 }
 
-TEST(Scheduler_L3Services_ConsoleLoggerGTest,TestInitialise) {
+TEST(Scheduler_L4LoggerService_ConsoleLoggerGTest,TestInitialise) {
     ConsoleLoggerTest target;
     ASSERT_TRUE(target.TestInitialise());
 }
 
-TEST(Scheduler_L3Services_ConsoleLoggerGTest,TestConsumeLogMessage) {
+TEST(Scheduler_L4LoggerService_ConsoleLoggerGTest,TestConsumeLogMessage) {
     ConsoleLoggerTest target;
     ASSERT_TRUE(target.TestConsumeLogMessage());
 }

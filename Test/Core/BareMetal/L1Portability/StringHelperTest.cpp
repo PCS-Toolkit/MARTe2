@@ -2,7 +2,7 @@
  * @file StringHelperTest.cpp
  * @brief Source file for class StringHelperTest
  * @date 30/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -117,6 +117,95 @@ bool StringHelperTest::TestCompareN() {
     size = 1;
     return (StringHelper::CompareN(NULL, NULL, size) == -1 && StringHelper::CompareN(string1, NULL, size) == -1
             && StringHelper::CompareN(NULL, string2, size) == -1);
+}
+
+bool StringHelperTest::TestToUpper() {
+	
+	// Check conversion to uppercase
+	char8 string1[] = "helloworld";
+	const char8* result1 = "HELLOWORLD";
+	
+	StringHelper::ToUpper(string1);
+	
+	if (StringHelper::Compare(string1, result1) != 0)
+		return false;
+	
+	// Check if uppercase and special characters are left as they are
+	char8 string2[] = "HelloWorld123 !£$%&()=?^\n";
+	const char8* result2 = "HELLOWORLD123 !£$%&()=?^\n";
+	
+	StringHelper::ToUpper(string2);
+	
+	if (StringHelper::Compare(string2, result2) != 0)
+		return false;
+	
+	// Check return false in case of NULL argument
+	if (StringHelper::ToUpper(NULL) != false)
+		return false;
+	
+	return true;
+
+}
+
+bool StringHelperTest::TestToLower() {
+	
+	// Check conversion to uppercase
+	char8 string1[] = "HELLOWORLD";
+	const char8* result1 = "helloworld";
+	
+	StringHelper::ToLower(string1);
+	
+	if (StringHelper::Compare(string1, result1) != 0)
+		return false;
+	
+	// Check if lowercase and special characters are left as they are
+	char8 string2[] = "hELLOwORLD123 !£$%&()=?^\n";
+	const char8* result2 = "helloworld123 !£$%&()=?^\n";
+	
+	StringHelper::ToLower(string2);
+	
+	if (StringHelper::Compare(string2, result2) != 0)
+		return false;
+	
+	// Check return false in case of NULL argument
+	if (StringHelper::ToLower(NULL) != false)
+		return false;
+	
+	return true;
+
+}
+
+bool StringHelperTest::TestCompareNoCaseSensN() {
+
+    const char8 *string1 = "HelloWorld";
+    const char8 *string2 = "hElLOD";
+
+    uint32 size = 5;
+
+    //Check the equality until size chars.
+    if (StringHelper::CompareNoCaseSensN(string1, string2, size) != 0) {
+        return false;
+    }
+
+    //Check if it returns 2 since string1 is greater than string2.
+    if (StringHelper::CompareNoCaseSensN(string1, string2, size + 1) != 2) {
+        return false;
+    }
+
+    //Check if it returns 1 since string2 is greater than string1.
+    if (StringHelper::CompareNoCaseSensN(string2, string1, size + 1) != 1) {
+        return false;
+    }
+
+    size = 0;
+    if (StringHelper::CompareNoCaseSensN(string1, string2, size)) {
+        return false;
+    }
+
+    //Check the return value in case of NULL arguments.
+    size = 1;
+    return (StringHelper::CompareNoCaseSensN(NULL, NULL, size) == -1 && StringHelper::CompareNoCaseSensN(string1, NULL, size) == -1
+            && StringHelper::CompareNoCaseSensN(NULL, string2, size) == -1);
 }
 
 bool StringHelperTest::TestCopy(const char8 *string) {

@@ -51,6 +51,7 @@ namespace MARTe {
 DataSourceI::DataSourceI() :
         ReferenceContainer() {
     numberOfSignals = 0u;
+    defaultBrokerOptim = false;
 }
 
 DataSourceI::~DataSourceI() {
@@ -59,6 +60,21 @@ DataSourceI::~DataSourceI() {
 
 bool DataSourceI::Initialise(StructuredDataI & data) {
     bool ret = ReferenceContainer::Initialise(data);
+    StreamString defaultBrokerOptimStr;
+    if (ret) {
+        if (data.Read("DefaultBrokerOptim", defaultBrokerOptimStr)) {
+            if (defaultBrokerOptimStr == "true") {
+                defaultBrokerOptim = true;
+            } 
+            else if (defaultBrokerOptimStr == "false") {
+                defaultBrokerOptim = false;
+            } 
+            else {
+                ret = false;
+                REPORT_ERROR(ErrorManagement::ParametersError, "DefaultBrokerOptim shall be either true or false. %s is not valid", defaultBrokerOptimStr.Buffer());
+            }
+        }
+    }
     if (data.MoveRelative("Signals")) {
         ret = signalsDatabase.Write("Signals", data);
         if (ret) {
@@ -93,6 +109,21 @@ bool DataSourceI::SetConfiguredDatabase(StructuredDataI & data) {
         signalsDatabaseNode = configuredDatabase;
         numberOfSignals = configuredDatabase.GetNumberOfChildren();
     }
+    uint32 n;
+    for (n=0u; (n<numberOfSignals) && (ret); n++) {
+        StreamString signalName;
+        ret = configuredDatabase.MoveToChild(n);
+        if (ret) {
+            ret = configuredDatabase.Read("QualifiedName", signalName);
+        }
+        if (ret) {
+            uint32 nn = n;
+            ret = signalNameCache.Write(signalName.Buffer(), nn);
+        }
+        if (ret) {
+            ret = configuredDatabase.MoveToAncestor(1u);
+        }
+    }
     return ret;
 }
 
@@ -109,23 +140,7 @@ bool DataSourceI::GetSignalName(const uint32 signalIdx, StreamString &signalName
 }
 
 bool DataSourceI::GetSignalIndex(uint32 &signalIdx, const char8* const signalName) {
-
-    const uint32 numSignals = GetNumberOfSignals();
-    bool ret = true;
-    bool found = false;
-    uint32 i;
-    for (i = 0u; (i < numSignals) && (ret) && (!found); i++) {
-        StreamString searchName;
-        ret = GetSignalName(i, searchName);
-        if (ret) {
-            found = (StringHelper::Compare(signalName, searchName.Buffer()) == 0);
-            signalIdx = i;
-        }
-    }
-    if (ret) {
-        ret = found;
-    }
-    return ret;
+    return signalNameCache.Read(signalName, signalIdx);
 }
 
 TypeDescriptor DataSourceI::GetSignalType(const uint32 signalIdx) {
@@ -646,6 +661,10 @@ bool DataSourceI::AddBrokers(const SignalDirection direction) {
     return ret;
 }
 
+bool DataSourceI::BrokerCopyTerminated() {
+    return true;
+}
+
 bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                                                      const char8* const functionName,
                                                      void * const gamMemPtr) {
@@ -687,10 +706,6 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
         if (ret) {
             StreamString signalName;
             ret = GetFunctionSignalAlias(InputSignals, functionIdx, i, signalName);
-            uint32 signalIdx = 0u;
-            if (ret) {
-                ret = GetSignalIndex(signalIdx, signalName.Buffer());
-            }
             if (ret) {
                 bool createBroker = true;
                 uint32 nBrokers = inputBrokers.Size();
@@ -703,17 +718,27 @@ bool DataSourceI::GetInputBrokers(ReferenceContainer &inputBrokers,
                     }
                 }
                 if (createBroker) {
+                    uint32 signalIdx = 0u;
+                    if (ret) {
+                        ret = GetSignalIndex(signalIdx, signalName.Buffer());
+                    }
                     REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Creating broker %s for %s and signal %s(%d)", suggestedBrokerNameIn.Buffer(),
                                             functionName, signalName.Buffer(), signalIdx);
-
                     ReferenceT<BrokerI> broker(suggestedBrokerNameIn.Buffer());
 
-                    ret = broker.IsValid();
-                    if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn.Buffer());
+                    if (ret) {
+                        ret = broker.IsValid();
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn.Buffer());
+                        }
                     }
                     if (ret) {
-                        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr);
+                        StreamString brokerName = functionName;
+                        brokerName += ".InputBroker.";
+                        brokerName += suggestedBrokerNameIn.Buffer();
+                        broker->SetName(brokerName.Buffer());
+
+                        ret = broker->Init(InputSignals, *this, functionName, gamMemPtr, defaultBrokerOptim);
                         if (ret) {
                             //Insert at the beginning the sync/trigger broker
                             if (isSyncOrTrigger) {
@@ -776,10 +801,6 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
         if (ret) {
             StreamString signalName;
             ret = GetFunctionSignalAlias(OutputSignals, functionIdx, i, signalName);
-            uint32 signalIdx = 0u;
-            if (ret) {
-                ret = GetSignalIndex(signalIdx, signalName.Buffer());
-            }
             if (ret) {
                 bool createBroker = true;
                 uint32 nBrokers = outputBrokers.Size();
@@ -793,17 +814,27 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
                 }
 
                 if (createBroker) {
+                    uint32 signalIdx = 0u;
+                    if (ret) {
+                        ret = GetSignalIndex(signalIdx, signalName.Buffer());
+                    }
                     REPORT_ERROR_PARAMETERS(ErrorManagement::Information, "Creating broker %s for %s and signal %s(%d)", suggestedBrokerNameIn.Buffer(),
                                             functionName, signalName.Buffer(), signalIdx);
 
                     ReferenceT<BrokerI> broker(suggestedBrokerNameIn.Buffer());
-
-                    ret = broker.IsValid();
-                    if (!ret) {
-                        REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn.Buffer());
+                    if (ret) {
+                        ret = broker.IsValid();
+                        if (!ret) {
+                            REPORT_ERROR_PARAMETERS(ErrorManagement::FatalError, "Broker %s not valid", suggestedBrokerNameIn.Buffer());
+                        }
                     }
                     if (ret) {
-                        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr);
+                        StreamString brokerName = functionName;
+                        brokerName += ".OutputBroker.";
+                        brokerName += suggestedBrokerNameIn.Buffer();
+                        broker->SetName(brokerName.Buffer());
+
+                        ret = broker->Init(OutputSignals, *this, functionName, gamMemPtr, defaultBrokerOptim);
                         if (ret) {
                             //Insert at the end the sync/trigger broker
                             if (!isSyncOrTrigger) {
@@ -825,8 +856,8 @@ bool DataSourceI::GetOutputBrokers(ReferenceContainer &outputBrokers,
 }
 
 void DataSourceI::Purge(ReferenceContainer &purgeList){
-    signalsDatabaseNode.Purge(purgeList);
-    functionsDatabaseNode.Purge(purgeList);
+    signalsDatabaseNode.Purge();
+    functionsDatabaseNode.Purge();
     ReferenceContainer::Purge(purgeList);
 }
 

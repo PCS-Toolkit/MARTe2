@@ -1,6 +1,6 @@
 /**
  * @file GeneralDefinitions.h
- * @brief Header file for GeneralDefinitions
+ * @brief Header file for class GeneralDefinitions
  * @date 17/06/2015
  * @author Giuseppe Ferrò
  *
@@ -32,13 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "CompilerTypes.h"
+#include "TypeCharacteristics.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
 /*---------------------------------------------------------------------------*/
 
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,GeneralDefinitions.h)
+#include INCLUDE_FILE_ENVIRONMENT(BareMetal,L1Portability,ENVIRONMENT,GeneralDefinitions.h)
 
 namespace MARTe {
 

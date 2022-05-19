@@ -28,7 +28,7 @@
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "ParserI.h"
+#include "ConfigurationParserI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -39,11 +39,6 @@
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-/**
- * The lexical elements for MARTe configuration streams encoded in XML language.
- */
-static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>', '{', '}', '/', '(', ')', '<', '>', '\0' };
 
 
 /**
@@ -95,7 +90,7 @@ static const GrammarInfo XMLGrammar = { "\n\r\t, ", "", "<!--", "-->", '<', '>',
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API XMLParser: public ParserI {
+class DLL_API XMLParser: public ConfigurationParserI {
 public:
 
     /**

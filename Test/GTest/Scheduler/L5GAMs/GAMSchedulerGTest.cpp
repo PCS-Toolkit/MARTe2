@@ -1,8 +1,8 @@
 /**
  * @file GAMSchedulerGTest.cpp
  * @brief Source file for class GAMSchedulerGTest
- * @date 09/ago/2016
- * @author Giuseppe Ferrò
+ * @date 09/08/2018
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -25,17 +25,11 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
+#include "MARTe2UTest.h"
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-
-/*---------------------------------------------------------------------------*/
-/*                         Project header includes                           */
-/*---------------------------------------------------------------------------*/
-
-#include "gtest/gtest.h"
 #include "GAMSchedulerTest.h"
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */

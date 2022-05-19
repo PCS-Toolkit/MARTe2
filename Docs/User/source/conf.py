@@ -26,7 +26,7 @@ author = u'F4E'
 # The short X.Y version
 version = u''
 # The full version, including alpha/beta/rc tags
-release = u'v0.15.2'
+release = u'v1.0.0'
 
 
 # -- General configuration ---------------------------------------------------
@@ -40,9 +40,9 @@ release = u'v0.15.2'
 # ones.
 extensions = [
     'sphinx.ext.todo',
-    'sphinx.ext.githubpages',
-    'sphinx.ext.extlinks', 
-    'rst2pdf.pdfbuilder',
+    #'sphinx.ext.githubpages',
+    'sphinx.ext.extlinks'
+    #'rst2pdf.pdfbuilder',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -211,5 +211,6 @@ extlinks = {'vciscorebml0': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blo
 			'vcisdoxygenclem': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/doxygen/classMARTe_1_1ErrorManagement_1_1%s.html', ''),
 			'vcisdoxygenmccl': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-Components-docs-master/doxygen/classMARTe_1_1%s.html', ''),
 			'vcisgl': ('https://vcis-gitlab.f4e.europa.eu/aneto/%s', ''),
-			'vcisgldocqa': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Docs/Documents/QA/%s', '')
+			'vcisgldocqa': ('https://vcis-gitlab.f4e.europa.eu/aneto/MARTe2/blob/master/Docs/Documents/QA/%s', ''),
+			'vcisjsdocs': ('https://vcis-jenkins.f4e.europa.eu/job/MARTe2-docs-master/JavaScriptDocs/%s.html', '')
 			}

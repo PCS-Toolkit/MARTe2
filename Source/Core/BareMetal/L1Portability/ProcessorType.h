@@ -31,6 +31,7 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
+#include "BitSet.h"
 #include "GeneralDefinitions.h"
 
 /*---------------------------------------------------------------------------*/
@@ -42,7 +43,7 @@ namespace MARTe {
 /**
  * @brief Defines the processors where a particular task should run.
  *
- * @details CPUs are set by a mask of bits (32 bits max => 32 processors max).
+ * @details CPUs are set by a mask of bits (64 bits max => 64 processors max).
  * System dependent calls to get the used cpus could be found in ProcessorType.h
  */
 class DLL_API ProcessorType {
@@ -54,7 +55,7 @@ public:
      * @details The default is to run the tasks all CPUs but the first.
      * @param[in] cpuMask the CPU mask.
      */
-    ProcessorType(const uint32 cpuMask = 0xFEu);
+    ProcessorType(const BitSet cpuMask = 0xFEu);
 
     /**
      * @brief Constructor from another ProcessorType object
@@ -63,10 +64,19 @@ public:
     ProcessorType(const ProcessorType &pt);
 
     /**
+     * @brief Constructor from integer.
+     *
+     * @details The default is to run the tasks all CPUs but the first.
+     * @param[in] cpuMask the CPU mask.
+     * @deprecated 
+     */
+    ProcessorType(const uint32 &cpuMask);
+
+    /**
      * @brief Set the processor mask.
      * @param[in] mask the CPU mask.
      */
-    void SetMask(const uint32 mask);
+    void SetMask(const BitSet mask);
 
     /**
      * @brief Add a CPU to the mask.
@@ -75,23 +85,45 @@ public:
     void AddCPU(const uint32 cpuNumber);
 
     /**
+     * @brief Check if a CPU is enabled or not.
+     * @param[in] cpuNumber the number of the CPU to check.
+     * @return the status of the selected CPU.
+     */
+    const bool CPUEnabled(const uint32 cpuNumber) const;
+
+    /**
+     * @brief Get the total maximum number of CPUs available in this configuration (the size of the BitSet)/
+     * @return the number of bits of the current bitmask.
+     */
+    const uint32 GetCPUsNumber() const;
+
+
+    /**
+     * @brief Get the CPU mask as a `uint32` in order to be compatible with the current configuration files.
+     * @return the CPUMask BitSet as a trunkated `uint32`
+     * @deprecated
+     */
+    const uint32 GetLegacyUint32Mask() const;
+
+    /**
      * @brief Assign operator with integer.
      * @param[in] cpuMask is the desired CPU mask.
+     */
+    void operator=(const BitSet cpuMask);
+
+    /**
+     * @brief Assign operator with uint32.
+     * @param[in] cpuMask is the desired CPU mask.
+     * @deprecated
      */
     void operator=(const uint32 cpuMask);
 
     /**
-     * @brief Assign operator with another ProcessorType.
+     *64brief Assign operator with another ProcessorType.
      * @param[in] pt is the ProcessorType to copy in this.
      */
     ProcessorType& operator=(const ProcessorType &pt);
-
-    /**
-     * @brief or operator with integer.
-     * @param[in] cpuMask is the CPU mask which will be in or with this.
-     */
-    void operator|=(const uint32 cpuMask);
-
+    
     /**
      * @brief or operator with another ProcessorType object.
      * @param[in] pt is the ProcessorType which will be in or with this.
@@ -107,13 +139,6 @@ public:
     bool operator==(const ProcessorType &pt) const;
 
     /**
-     * @brief Compares this CPU mask with an input mask.
-     * @param[in] mask is the mask which will be compared with this CPU mask.
-     * @return true if the masks are equal.
-     */
-    bool operator==(const uint32 mask) const;
-
-    /**
      * @brief Compares this object with another ProcessorType.
      * @param[in] pt is the ProcessorType which will be compared with this.
      * @return true if the masks are different.
@@ -122,47 +147,40 @@ public:
     bool operator!=(const ProcessorType &pt) const;
 
     /**
-     * @brief Compares this CPU mask with an input mask.
-     * @param[in] mask is the mask which will be compared with this CPU mask.
-     * @return true if the masks are different.
-     */
-    bool operator!=(const uint32 mask) const;
-
-    /**
      * @brief Returns the currently set CPU mask.
-     * @return the CPU mask as an uint32.
+     * @return the CPU mask as a BitSize.
      */
-    uint32 GetProcessorMask() const;
+    BitSet GetProcessorMask() const;
 
     /**
      * @brief Rerurns the default CPU mask.
      * @return the default CPU mask.
      */
-    static uint32 GetDefaultCPUs();
+    static ProcessorType GetDefaultCPUs();
 
     /**
      * @brief Sets the default CPU mask.
      * @param[in] mask defines the default CPU.
      */
-    static void SetDefaultCPUs(const uint32 &mask);
+    static void SetDefaultCPUs(const BitSet &mask);
 
 private:
     /**
      * The processor mask
      */
-    uint32 processorMask;
+    BitSet processorMask;
 
     /**
      * The default CPU mask. Initialised to zero.
      */
-    static uint32 defaultCPUs;
+    static BitSet defaultCPUs;
 };
 
 /**
  * Declares that the number of CPUs is undefined
  */
 /*lint -e{9141} constant that can be reused by other classes*/
-static const ProcessorType UndefinedCPUs(0u);
+static const ProcessorType UndefinedCPUs(0ull);
 /*---------------------------------------------------------------------------*/
 /*                        Inline method definitions                          */
 /*---------------------------------------------------------------------------*/

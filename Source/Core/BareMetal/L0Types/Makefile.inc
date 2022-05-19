@@ -24,13 +24,20 @@
 
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-OBJSX=  LinkedListable.x \
+#Allow portable compilation of the core (i.e. with the Architecture and Environment defined elsewhere w.r.t. to the core)
+MARTe2_TIER=BareMetal
+MARTe2_LEVEL=L0Types
+
+OBJSX=  BitSet.x\
+        HashFunction.x\
+        DjbHashFunction.x\
+        Fnv1aHashFunction.x\
+        LinkedListable.x \
         LinkedListHolder.x
         
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
-
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 all: $(OBJS) $(SUBPROJ)   \
 		$(BUILD_DIR)/L0TypesB$(LIBEXT) \
@@ -40,5 +47,5 @@ all: $(OBJS) $(SUBPROJ)   \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

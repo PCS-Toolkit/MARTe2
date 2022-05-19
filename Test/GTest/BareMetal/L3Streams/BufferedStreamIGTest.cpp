@@ -26,14 +26,13 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
 #include <BufferedStreamITest.h>
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
 /*---------------------------------------------------------------------------*/
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Static definitions                              */
@@ -54,8 +53,6 @@ TEST(BareMetal_L3Streams_BufferedStreamIGTest,TestAnyType) {
     BufferedStreamITest streamtest;
     ASSERT_TRUE(streamtest.TestAnyType());
 }
-
-
 
 TEST(BareMetal_L3Streams_BufferedStreamIGTest,TestGetToken_TableTerminators_BufferSize_1) {
     BufferedStreamITest streamtest;
@@ -817,3 +814,24 @@ TEST(BareMetal_L3Streams_BufferedStreamIGTest, TestPrintf) {
     BufferedStreamITest streamtest;
     ASSERT_TRUE(streamtest.TestPrintf());
 }
+
+TEST(BareMetal_L3Streams_BufferedStreamIGTest, TestFlush) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestFlush());
+}
+
+TEST(BareMetal_L3Streams_BufferedStreamIGTest, TestRefill) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestRefill());
+}
+
+TEST(BareMetal_L3Streams_BufferedStreamIGTest, TestSetCalibReadParam) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestSetCalibReadParam());
+}
+
+TEST(BareMetal_L3Streams_BufferedStreamIGTest, TestSetCalibWriteParam) {
+    BufferedStreamITest streamtest;
+    ASSERT_TRUE(streamtest.TestSetCalibWriteParam());
+}
+

@@ -32,18 +32,13 @@
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
 
-#include "ParserI.h"
+#include "ConfigurationParserI.h"
 
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
-
-/**
- * The lexical elements for MARTe configuration streams encoded in JSON language.
- */
-static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', '[', ']', '[', ']', '\0', '\0', '\0' };
 
 
 
@@ -95,7 +90,7 @@ static const GrammarInfo JsonGrammar = { "\n\r\t, ", "", "", "", ':', '{', '}', 
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API JsonParser: public ParserI {
+class DLL_API JsonParser: public ConfigurationParserI {
 
 public:
 

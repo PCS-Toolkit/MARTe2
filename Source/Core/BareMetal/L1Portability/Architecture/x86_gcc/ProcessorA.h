@@ -2,7 +2,8 @@
  * @file ProcessorA.h
  * @brief Header file for module ProcessorA
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
+ * @author Luca Boncagni
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -27,6 +28,9 @@
 /*---------------------------------------------------------------------------*/
 /*                        Standard header includes                           */
 /*---------------------------------------------------------------------------*/
+#ifndef LINT
+#include <string.h>
+#endif
 
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
@@ -64,12 +68,17 @@ static inline void CPUID(uint32 info,
                          uint32 &ebx,
                          uint32 &ecx,
                          uint32 &edx) {
+#if defined( i386 ) && defined ( PIC )
+    /* in case of PIC under 32-bit EBX cannot be clobbered */
+    __asm__ volatile ("movl %ebx, %%edi \n\t cpuid \n\t xchgl %ebx, %%edi" : "=D" (ebx), "+a" (eax), "+c" (ecx), "=d" (edx));
+#else
     __asm__(
             "cpuid;" /* assembly code */
             :"=a" (eax), "=b" (ebx), "=c" (ecx), "=d" (edx) /* outputs */
             :"a" (info) /* input: info into eax */
             /* clobbers: none */
     );
+#endif
 }
 
 inline uint32 Family() {
@@ -102,7 +111,14 @@ inline uint32 Model() {
 
 inline const char8 *VendorId() {
     uint32 eax = 0;
-    CPUID(0, eax, (uint32 &) processorVendorId[0], (uint32 &) processorVendorId[8], (uint32 &) processorVendorId[4]);
+    uint32 ebx = 0;
+    uint32 ecx = 0;
+    uint32 edx = 0;
+
+    CPUID(0, eax, ebx, ecx, edx);
+    memcpy(&processorVendorId[0], &ebx, 4u);
+    memcpy(&processorVendorId[8], &ecx, 4u);
+    memcpy(&processorVendorId[4], &edx, 4u);
     processorVendorId[12] = 0;
     return &(processorVendorId[0]);
 }

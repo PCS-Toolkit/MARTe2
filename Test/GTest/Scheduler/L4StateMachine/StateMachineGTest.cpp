@@ -30,7 +30,7 @@
 /*---------------------------------------------------------------------------*/
 
 
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 #include "StateMachineTest.h"
 
 /*---------------------------------------------------------------------------*/
@@ -109,4 +109,9 @@ TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage_G
 TEST(Scheduler_L4StateMachine_StateMachineGTest,TestEventTriggered_SendMessage_PingPong) {
     StateMachineTest target;
     ASSERT_TRUE(target.TestEventTriggered_SendMessage_PingPong());
+}
+
+TEST(Scheduler_L4StateMachine_StateMachineGTest,TestExportData) {
+    StateMachineTest target;
+    ASSERT_TRUE(target.TestExportData());
 }

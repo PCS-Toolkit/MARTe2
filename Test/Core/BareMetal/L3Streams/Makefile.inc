@@ -25,23 +25,30 @@
 #############################################################
 
 OBJSX=	AdvancedErrorManagementTest.x \
+        Base64EncoderTest.x\
         BitSetToIntegerTest.x \
 	BufferedStreamIOBufferTest.x \
 	BufferedStreamITest.x \
 	CharBufferTest.x \
 	DoubleBufferedStreamTest.x \
 	IOBufferTest.x \
+	JsonPrinterTest.x\
+	PrinterITest.x\
 	SingleBufferedStreamTest.x \
+	StandardPrinterTest.x\
 	StreamMemoryReferenceTest.x \
 	StreamStringIOBufferTest.x \
 	StreamStringTest.x \
-	StreamTestHelper.x
+	StreamTestHelper.x\
+	StreamStructuredDataTest.x\
+	StreamStructuredDataITest.x\
+	XMLPrinterTest.x
 		
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
 
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I../../../../Source/Core/BareMetal/L0Types
 INCLUDES += -I../../../../Source/Core/BareMetal/L1Portability
@@ -56,5 +63,5 @@ all: $(OBJS) \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

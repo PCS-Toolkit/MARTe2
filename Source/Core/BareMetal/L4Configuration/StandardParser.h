@@ -31,17 +31,13 @@
 /*---------------------------------------------------------------------------*/
 /*                        Project header includes                            */
 /*---------------------------------------------------------------------------*/
-#include "ParserI.h"
+#include "ConfigurationParserI.h"
 /*---------------------------------------------------------------------------*/
 /*                           Class declaration                               */
 /*---------------------------------------------------------------------------*/
 
 namespace MARTe {
 
-/**
- * The lexical elements for MARTe configuration streams encoded in standard MARTe configuration language.
- */
-static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', '{', '}', '{', '}', '{', '}', '(', ')', '\0' };
 
 /**
  * @brief Concrete class for MARTe::ParserI abstract class, configured
@@ -92,7 +88,7 @@ static const GrammarInfo StandardGrammar = { "\n\r\t, ", "//", "/*", "*/", '=', 
  * Note: This grammar is written in the SLK language and refers to functions
  * declared in MARTe::ParserI.
  */
-class DLL_API StandardParser: public ParserI {
+class DLL_API StandardParser: public ConfigurationParserI {
 
 public:
 

@@ -25,26 +25,39 @@
 #############################################################
 
 OBJSX=	BufferedStreamI.x \
+		Base64Encoder.x\
 		BufferedStreamIOBuffer.x \
 		CharBuffer.x \
 		DoubleBufferedStream.x \
 		IOBuffer.x \
 		IOBufferFloatPrint.x \
 		IOBufferIntegerPrint.x \
+		IOBufferStandardPrint.x \
+		IOBufferJsonPrint.x \
+		IOBufferXMLPrint.x \
+		JsonPrinter.x\
+		PrinterI.x\
+		ReferenceContainer.x \
 		SingleBufferedStream.x \
+		StandardPrinter.x\
 		StreamMemoryReference.x \
+		StreamStructuredDataI.x\
+		StreamStructuredData.x\
 		StreamString.x \
-		StreamStringIOBuffer.x
+		StreamStringIOBuffer.x\
+		XMLPrinter.x
         
 PACKAGE=Core/BareMetal
 ROOT_DIR=../../../..
-MAKEDEFAULTDIR=$(ROOT_DIR)/MakeDefaults
-include $(MAKEDEFAULTDIR)/MakeStdLibDefs.$(TARGET)
+MARTe2_MAKEDEFAULT_DIR?=$(ROOT_DIR)/MakeDefaults
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibDefs.$(TARGET)
 
 INCLUDES += -I.
 INCLUDES += -I../L0Types
 INCLUDES += -I../L1Portability
 INCLUDES += -I../L2Objects
+
+OPTIM = -O2
 
 all: $(OBJS)    \
 	        $(BUILD_DIR)/L3StreamsB$(LIBEXT) \
@@ -53,5 +66,5 @@ all: $(OBJS)    \
 
 include depends.$(TARGET)
 
-include $(MAKEDEFAULTDIR)/MakeStdLibRules.$(TARGET)
+include $(MARTe2_MAKEDEFAULT_DIR)/MakeStdLibRules.$(TARGET)
 

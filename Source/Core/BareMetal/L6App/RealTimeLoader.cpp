@@ -42,6 +42,7 @@
 /*---------------------------------------------------------------------------*/
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
+
 namespace MARTe {
 
 RealTimeLoader::RealTimeLoader() :
@@ -89,9 +90,9 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
 
     uint32 nApps = rtApps.Size();
     (void) firstState.Seek(0ull);
-    for (uint32 i = 0u; (err.ErrorsCleared()) && (i < nApps); i++) {
-        ReferenceT<RealTimeApplication> rtApp = rtApps.Get(i);
-        if (firstState.Size() > 0u) {
+    if (firstState.Size() > 0u) {
+        for (uint32 i = 0u; (err.ErrorsCleared()) && (i < nApps); i++) {
+            ReferenceT<RealTimeApplication> rtApp = rtApps.Get(i);
             StreamString destination;
             char8 term;
             err.fatalError = !firstState.GetToken(destination, ":", term);
@@ -116,9 +117,9 @@ ErrorManagement::ErrorType RealTimeLoader::Start() {
                 REPORT_ERROR_STATIC(err, "Failed to get the first state for the application %d ", ii);
             }
         }
-        else {
-            err = Loader::Start();
-        }
+    }
+    else {
+        err = Loader::Start();
     }
     return err;
 }
@@ -131,7 +132,7 @@ ErrorManagement::ErrorType RealTimeLoader::Stop() {
         for (uint32 i = 0u; (ret.ErrorsCleared()) && (i < nApps); i++) {
             ReferenceT<RealTimeApplication> rtApp = rtApps.Get(i);
             ret = rtApp->StopCurrentStateExecution();
-            if (ret.ErrorsCleared()) {
+            if (!ret.ErrorsCleared()) {
                 REPORT_ERROR_STATIC(ErrorManagement::FatalError, "Failed to StopCurrentStateExecution");
             }
         }

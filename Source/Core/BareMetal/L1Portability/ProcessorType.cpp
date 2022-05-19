@@ -2,7 +2,7 @@
  * @file ProcessorType.cpp
  * @brief Source file for class ProcessorType
  * @date 17/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -36,17 +36,17 @@
 namespace MARTe{
 
 #if ProcessorTypeDefaultCPUs
-uint32 ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
+BitSet ProcessorType::defaultCPUs = ProcessorTypeDefaultCPUs;
 #else
-uint32 ProcessorType::defaultCPUs = 0;
+BitSet ProcessorType::defaultCPUs = 0u;
 #endif
 
 
-uint32 ProcessorType::GetDefaultCPUs() {
-    return ProcessorType::defaultCPUs;
+ProcessorType ProcessorType::GetDefaultCPUs() {
+    return ProcessorType(ProcessorType::defaultCPUs);
 }
 
-void ProcessorType::SetDefaultCPUs(const uint32 &mask) {
+void ProcessorType::SetDefaultCPUs(const BitSet &mask) {
     ProcessorType::defaultCPUs = mask;
 }
 
@@ -58,14 +58,30 @@ void ProcessorType::SetDefaultCPUs(const uint32 &mask) {
 /*                           Method definitions                              */
 /*---------------------------------------------------------------------------*/
 
-void ProcessorType::SetMask(const uint32 mask) {
+void ProcessorType::SetMask(const BitSet mask) {
     processorMask = mask;
 }
 
 void ProcessorType::AddCPU(const uint32 cpuNumber) {
-    uint32 cpuMask = 1u;
-    cpuMask = cpuMask << (cpuNumber - 1u);
-    processorMask |= cpuMask;
+    // NOTE no test to ensure that cpuNumber is smaller than the maximum size
+    // of the bitmask.
+    processorMask.Set(cpuNumber - 1u, true);
+}
+
+const bool ProcessorType::CPUEnabled(const uint32 cpuNumber) const {
+    return processorMask.Bit(cpuNumber -1u);
+}
+
+const uint32 ProcessorType::GetCPUsNumber() const {
+    return processorMask.GetNumberOfElements() * 32u;
+}    
+
+const uint32 ProcessorType::GetLegacyUint32Mask() const {
+    return static_cast<uint32>(processorMask);
+}
+
+void ProcessorType::operator=(const BitSet cpuMask) {
+    processorMask = cpuMask;
 }
 
 void ProcessorType::operator=(const uint32 cpuMask) {
@@ -79,10 +95,6 @@ ProcessorType& ProcessorType::operator=(const ProcessorType &pt) {
     return *this;
 }
 
-void ProcessorType::operator|=(const uint32 cpuMask) {
-    processorMask |= cpuMask;
-}
-
 void ProcessorType::operator|=(const ProcessorType &pt) {
     processorMask |= pt.processorMask;
 }
@@ -91,28 +103,25 @@ bool ProcessorType::operator==(const ProcessorType &pt) const {
     return processorMask == pt.processorMask;
 }
 
-bool ProcessorType::operator==(const uint32 mask) const {
-    return processorMask == mask;
-}
-
 bool ProcessorType::operator!=(const ProcessorType &pt) const {
     return processorMask != pt.processorMask;
 }
 
-bool ProcessorType::operator!=(const uint32 mask) const {
-    return processorMask != mask;
-}
-
-uint32 ProcessorType::GetProcessorMask() const {
-    return processorMask;
-}
-
-ProcessorType::ProcessorType(const uint32 cpuMask) {
+ProcessorType::ProcessorType(const BitSet cpuMask) {
     processorMask = cpuMask;
 }
 
 ProcessorType::ProcessorType(const ProcessorType &pt) {
     processorMask = pt.processorMask;
 }
+
+ProcessorType::ProcessorType(const uint32 &cpuMask){
+    processorMask = cpuMask;
+}
+
+BitSet ProcessorType::GetProcessorMask() const{
+    return processorMask;
+}
+
 
 }

@@ -24,8 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -57,4 +56,24 @@ TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistra
 TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestStructureRegistration_False_TypeNoParameters) {
     IntrospectionStructureTest test;
     ASSERT_TRUE(test.TestStructureRegistration_False_TypeNoParameters());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI_TypeDeclared) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI_TypeDeclared());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI_ArraysStructures) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI_ArraysStructures());
+}
+
+TEST(BareMetal_L4Configuration_IntrospectionStructureGTest,TestRegisterStructuredDataI_ArraysStructures_TypeDeclared) {
+    IntrospectionStructureTest test;
+    ASSERT_TRUE(test.TestRegisterStructuredDataI_ArraysStructures_TypeDeclared());
 }

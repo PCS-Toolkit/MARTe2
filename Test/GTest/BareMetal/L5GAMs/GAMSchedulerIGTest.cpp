@@ -25,8 +25,7 @@
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
 
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -70,4 +69,9 @@ TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestPrepareNextState) {
 TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestExecuteSingleCycle) {
     GAMSchedulerITest test;
     ASSERT_TRUE(test.TestExecuteSingleCycle());
+}
+
+TEST(BareMetal_L5GAMs_GAMSchedulerIGTest,TestExecuteSingleCycle_False) {
+    GAMSchedulerITest test;
+    ASSERT_TRUE(test.TestExecuteSingleCycle_False());
 }

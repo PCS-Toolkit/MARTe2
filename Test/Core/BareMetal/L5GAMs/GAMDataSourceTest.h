@@ -65,6 +65,11 @@ public:
     bool TestPrepareNextState_Default_Dimensions();
 
     /**
+     * @brief Tests the PrepareNextState method using signal char8[].
+     */
+    bool TestPrepareNextState_Default_Char8Arr();
+
+    /**
      * @brief Tests the PrepareNextStatemethod using signal Default values which have a dimension mismatch with respect to the signal dimension (number of rows).
      */
     bool TestPrepareNextState_Default_Dimensions_Mismatch_1();
@@ -144,6 +149,15 @@ public:
      */
     bool TestSetConfiguredDatabase_NoProducer_State_1_AllowNoProducers();
 
+    /**
+     * @brief Tests the PrepareNextState method without reseting the default values at state transition.
+     */
+    bool TestPrepareNextState_NoResetUnusedVariables();
+
+    /**
+     * @brief Tests the SetConfiguredDatabase method and verifies that no error is issued if a the signal is produced by different producers in different states.
+     */
+    bool TestSetConfiguredDatabase_MoreThanOneProducer_Different_States();
 };
 
 /*---------------------------------------------------------------------------*/

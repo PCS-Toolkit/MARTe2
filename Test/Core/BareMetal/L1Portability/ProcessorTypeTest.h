@@ -2,7 +2,7 @@
  * @file ProcessorTypeTest.h
  * @brief Header file for class ProcessorTypeTest
  * @date 25/06/2015
- * @author Giuseppe Ferr�
+ * @author Giuseppe Ferro
  *
  * @copyright Copyright 2015 F4E | European Joint Undertaking for ITER and
  * the Development of Fusion Energy ('Fusion for Energy').
@@ -104,7 +104,7 @@ public:
      * @param[in] mask is the desired cpu mask.
      * @return true if the mask is assigned correctly.
      */
-    bool TestSetMask(uint32 mask);
+    bool TestSetMask(uint64 mask);
 
     /**
      * @brief Tests the ProcessorType::AddCPU function.
@@ -114,6 +114,11 @@ public:
      */
     bool TestAddCPU(uint32 cpuNumber1,
                     uint32 cpuNumber2);
+
+    /**
+     * @brief Tests the ProcessorType::GetProcessorMask function
+     */
+    bool TestGetProcessorMask();
 
 private:
 

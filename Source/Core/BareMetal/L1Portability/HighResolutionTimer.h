@@ -35,8 +35,8 @@
 //#include "ErrorManagement.h"
 #include "GeneralDefinitions.h"
 #include "TimeStamp.h"
-#include INCLUDE_FILE_ARCHITECTURE(ARCHITECTURE,HighResolutionTimerA.h)
-#include INCLUDE_FILE_ENVIRONMENT(ENVIRONMENT,HighResolutionTimer.h)
+#include INCLUDE_FILE_ARCHITECTURE(BareMetal,L1Portability,ARCHITECTURE,HighResolutionTimerA.h)
+#include INCLUDE_FILE_ENVIRONMENT(BareMetal,L1Portability,ENVIRONMENT,HighResolutionTimer.h)
 
 /*---------------------------------------------------------------------------*/
 /*                           Module declaration                               */
@@ -77,7 +77,7 @@ namespace MARTe {
          * @param[in] tStart is the initial ticks number.
          * @return the time elapsed in seconds
          */
-        inline float64 TicksToTime(uint64 tStop, uint64 tStart = 0);
+        inline float64 TicksToTime(uint64 tStop, uint64 tStart = 0u);
 
         /**
          * @brief Gets the current time stamp [microseconds, seconds, minutes, hour, day, month, year].

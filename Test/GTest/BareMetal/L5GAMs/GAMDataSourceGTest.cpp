@@ -24,8 +24,7 @@
 /*---------------------------------------------------------------------------*/
 /*                         Standard header includes                          */
 /*---------------------------------------------------------------------------*/
-#include <limits.h>
-#include "gtest/gtest.h"
+#include "MARTe2UTest.h"
 
 /*---------------------------------------------------------------------------*/
 /*                         Project header includes                           */
@@ -58,6 +57,11 @@ TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Basic) {
 TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions) {
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestPrepareNextState_Default_Dimensions());
+}
+
+TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Char8Arr) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_Default_Char8Arr());
 }
 
 TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_Default_Dimensions_Mismatch_1) {
@@ -138,4 +142,14 @@ TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestSetConfiguredDatabase_GAM_Never_Exe
 TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestSetConfiguredDatabase_NoProducer_State_1_AllowNoProducers) {
     GAMDataSourceTest test;
     ASSERT_TRUE(test.TestSetConfiguredDatabase_NoProducer_State_1_AllowNoProducers());
+}
+
+TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestPrepareNextState_NoResetUnusedVariables) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestPrepareNextState_NoResetUnusedVariables());
+}
+
+TEST(BareMetal_L5GAMs_GAMDataSourceGTest,TestSetConfiguredDatabase_MoreThanOneProducer_Different_States) {
+    GAMDataSourceTest test;
+    ASSERT_TRUE(test.TestSetConfiguredDatabase_MoreThanOneProducer_Different_States());
 }

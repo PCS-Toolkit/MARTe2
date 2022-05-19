@@ -80,6 +80,7 @@ EmbeddedThreadI::EmbeddedThreadI(EmbeddedServiceMethodBinderI &binder, const uin
     priorityLevel = 0u;
     cpuMask = UndefinedCPUs;
     stackSize = THREADS_DEFAULT_STACKSIZE;
+    mux.Create();
 }
 
 
@@ -92,7 +93,10 @@ EmbeddedThreadI::Commands EmbeddedThreadI::GetCommands() const {
 }
 
 void EmbeddedThreadI::SetCommands(const Commands commandsIn) {
-    commands = commandsIn;
+    if (mux.FastLock() == ErrorManagement::NoError) {
+        commands = commandsIn;
+    }
+    mux.FastUnLock();
 }
 
 ThreadIdentifier EmbeddedThreadI::GetThreadId() const {
@@ -201,6 +205,9 @@ ErrorManagement::ErrorType EmbeddedThreadI::Start() {
 
         err.fatalError = (GetThreadId() == 0u);
     }
+    if (err.ErrorsCleared()) {
+        Threads::SetPriority(threadId, priorityClass, priorityLevel);
+    }
 
     return err;
 }
@@ -300,6 +307,11 @@ void EmbeddedThreadI::SetCPUMask(const ProcessorType& cpuMaskIn) {
         cpuMask = cpuMaskIn;
     }
 }
+
+void EmbeddedThreadI::SetThreadNumber(const uint16 threadNumberIn) {
+    threadNumber = threadNumberIn;
+}
+
 
 
 }

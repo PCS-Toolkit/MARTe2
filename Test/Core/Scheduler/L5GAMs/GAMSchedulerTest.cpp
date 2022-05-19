@@ -47,7 +47,7 @@ class GAMSchedulerTestGAMFalse: public GAM {
 public:
     CLASS_REGISTER_DECLARATION()
 
-GAMSchedulerTestGAMFalse    () {
+    GAMSchedulerTestGAMFalse() {
 
     }
 
@@ -70,7 +70,7 @@ GAMSchedulerTestGAMFalse    () {
 };
 CLASS_REGISTER(GAMSchedulerTestGAMFalse, "1.0")
 
-StreamString configFull = ""
+static StreamString configFull = ""
         "+StateMachine = {"
         "    Class = StateMachine"
         "    +StopState = {"
@@ -451,7 +451,7 @@ StreamString configFull = ""
         "}"
         "";
 
-StreamString configFullError = ""
+static StreamString configFullError = ""
         "+StateMachine = {"
         "    Class = StateMachine"
         "    +StopState = {"
@@ -851,7 +851,7 @@ StreamString configFullError = ""
         "}"
         "";
 
-StreamString configSimple = ""
+static StreamString configSimple = ""
         "$Fibonacci = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
@@ -1091,7 +1091,7 @@ StreamString configSimple = ""
         "    }"
         "}";
 
-StreamString configSimpleOneMessage = ""
+static StreamString configSimpleOneMessage = ""
         "$Fibonacci = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
@@ -1155,7 +1155,7 @@ StreamString configSimpleOneMessage = ""
         "    }"
         "}";
 
-StreamString configSimpleTwoMessages = ""
+static StreamString configSimpleTwoMessages = ""
         "$Fibonacci = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
@@ -1224,7 +1224,7 @@ StreamString configSimpleTwoMessages = ""
         "    }"
         "}";
 
-StreamString configSimpleInvalidMessage = ""
+static StreamString configSimpleInvalidMessage = ""
         "$Fibonacci = {"
         "    Class = RealTimeApplication"
         "    +Functions = {"
@@ -1291,7 +1291,7 @@ StreamString configSimpleInvalidMessage = ""
 /*---------------------------------------------------------------------------*/
 
 GAMSchedulerTest::GAMSchedulerTest() {
-
+    numOfThreadsBefore = Threads::NumberOfThreads();
 }
 
 GAMSchedulerTest::~GAMSchedulerTest() {
@@ -1323,20 +1323,27 @@ bool GAMSchedulerTest::TestInitialise() {
     config.Write("TimingDataSource", "Timings");
     GAMScheduler scheduler;
     bool ok = scheduler.Initialise(config);
-
+    ObjectRegistryDatabase::Instance()->Purge();
     return ok;
 }
 
 bool GAMSchedulerTest::TestInitialise_ErrorMessage() {
-    return Init(configSimpleOneMessage);
+    bool ok = Init(configSimpleOneMessage);
+    ObjectRegistryDatabase::Instance()->Purge();
+
+    return ok;
 }
 
 bool GAMSchedulerTest::TestInitialise_False_MoreThanOneErrorMessage() {
-    return !Init(configSimpleTwoMessages);
+    bool ok = !Init(configSimpleTwoMessages);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
 }
 
 bool GAMSchedulerTest::TestInitialise_False_InvalidMessage() {
-    return !Init(configSimpleInvalidMessage);
+    bool ok = !Init(configSimpleInvalidMessage);
+    ObjectRegistryDatabase::Instance()->Purge();
+    return ok;
 }
 
 bool GAMSchedulerTest::TestIntegrated() {
@@ -1438,11 +1445,11 @@ bool GAMSchedulerTest::TestIntegrated() {
     }
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
 
-    while (Threads::NumberOfThreads() > 1) {
+    while (Threads::NumberOfThreads() > 1 + numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1489,11 +1496,11 @@ bool GAMSchedulerTest::TestIntegrated_TriggerErrorMessage() {
         }
     }
     //Wait for the StateMachine to be the only thread alive.
-    while (Threads::NumberOfThreads() > 1) {
+    while (Threads::NumberOfThreads() > 1 + numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1572,7 +1579,7 @@ bool GAMSchedulerTest::TestPurge() {
     ok &= (MessageI::SendMessage(messageStop, NULL) == ErrorManagement::NoError);
 
     ObjectRegistryDatabase::Instance()->Purge();
-    while (Threads::NumberOfThreads() > 0) {
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
         Sleep::Sec(0.1);
     }
 
@@ -1580,7 +1587,7 @@ bool GAMSchedulerTest::TestPurge() {
 }
 
 static uint32 done = 0;
-void PrepareNext(RealTimeApplication &app) {
+static void PrepareNext(RealTimeApplication &app) {
     // the start execution is inside the prepare next state
     if (!app.PrepareNextState("State2")) {
         printf("\nFailed @ app.PrepareNextState!!!\n");
@@ -1619,10 +1626,10 @@ bool GAMSchedulerTest::TestStartNextStateExecution() {
         Sleep::Sec(1.0);
 
         app->StopCurrentStateExecution();
-
-        while (Threads::NumberOfThreads() > 0) {
-            Sleep::MSec(10);
-        }
+    }
+    ObjectRegistryDatabase::Instance()->Purge();
+    while (Threads::NumberOfThreads() > numOfThreadsBefore) {
+        Sleep::MSec(10);
     }
     return err.ErrorsCleared();
 }
@@ -1640,6 +1647,7 @@ bool GAMSchedulerTest::TestStartNextStateExecution_False_PrepareNextState() {
     ReferenceT<GAMScheduler> sched = app->Find("Scheduler");
 
     ErrorManagement::ErrorType err = app->StartNextStateExecution();
+    ObjectRegistryDatabase::Instance()->Purge();
 
     return !err.ErrorsCleared();
 }
