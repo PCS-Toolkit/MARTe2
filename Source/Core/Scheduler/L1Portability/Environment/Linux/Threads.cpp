@@ -157,11 +157,12 @@ void SetPriority(const ThreadIdentifier &threadId,
                 priorityClassNumber = 2u;
                 break;
                 case RealTimePriorityClass:
-                priorityClassNumber = 3u;
+                priorityClassNumber = 2u; //3u;
                 policy = SCHED_FIFO;//Only put FIFO (more aggressive) for the RealTimePriorityClass
                 break;
             }
-            uint32 priorityLevelToAssign = 28u * priorityClassNumber;
+            //uint32 priorityLevelToAssign = 28u * priorityClassNumber;
+            uint32 priorityLevelToAssign = 1u * priorityClassNumber;
             priorityLevelToAssign += (static_cast<uint32>(prioLevel));
             //Bound the priority to its maximum
             uint32 maxPriority = static_cast<uint32>(sched_get_priority_max(policy));
@@ -175,11 +176,12 @@ void SetPriority(const ThreadIdentifier &threadId,
             ok = (pthread_getschedparam(threadId, &ignore, &param) == 0);
             if (ok) {
                 param.sched_priority = static_cast<int32>(priorityLevelToAssign);
-                if (pthread_setschedparam(threadId, policy, &param) != 0) {
+                /*if (pthread_setschedparam(threadId, policy, &param) != 0) {
                     threadInfo->SetPriorityLevel(oldPriorityLevel);
                     threadInfo->SetPriorityClass(oldPriorityClass);
                     REPORT_ERROR_STATIC_0(ErrorManagement::Warning, "Failed to change the thread priority (likely due to insufficient permissions)");
                 }
+		*/
             }
             else {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_getschedparam()");
@@ -363,9 +365,12 @@ ThreadIdentifier BeginThread(const ThreadFunctionType function,
 
             for (j = 0u; (j < runOnCPUs.GetCPUsNumber()) && (j < static_cast<uint32>(CPU_SETSIZE)); j++) {
                 if (runOnCPUs.CPUEnabled(j + 1u)) {
+                    printf("thread %s, setting cpu %d\n",name, j);
                     CPU_SET(static_cast<int32>(j), &processorCpuSet);
                 }
+            
             }
+            printf("setting affinity for threadId 0x%lx\n", threadId);
             ok = (pthread_setaffinity_np(threadId, sizeof(processorCpuSet), &processorCpuSet) == 0);
             if(!ok) {
                 REPORT_ERROR_STATIC_0(ErrorManagement::OSError, "Error: pthread_setaffinity_np()");
